@@ -1,0 +1,33 @@
+
+
+{
+  "nodes": [
+    {"user": "1", "length": 12},
+    {"user": "5", "length": 12},
+    {"user": "30", "length": 12},
+    {"user": "46", "length": 14},
+    {"user": "6546", "length": 1},
+    {"user": "324", "length": 16},
+    {"user": "65654", "length": 16},
+    {"user": "323213", "length": 1},
+    {"user": "43423", "length": 1},
+    {"user": "6654", "length": 1},
+    {"user": "433", "length": 1},
+    {"user": "1212", "length": 1},
+    {"user": "111", "length": 1}
+  ],
+  "links": [
+    {"source": 0, "target": 1,  "bond": 1, "length": 50},
+    {"source": 1, "target": 2,  "bond": 1, "length": 50},
+    {"source": 1, "target": 3,  "bond": 1, "length": 50},
+    {"source": 2, "target": 5,  "bond": 2, "length": 50},
+    {"source": 2, "target": 6,  "bond": 1, "length": 50},
+    {"source": 1, "target": 4,  "bond": 1, "length": 2},
+    {"source": 3, "target": 10, "bond": 1, "length": 2},
+    {"source": 3, "target": 11, "bond": 1, "length": 2},
+    {"source": 0, "target": 7,  "bond": 1, "length": 2},
+    {"source": 0, "target": 8,  "bond": 1, "length": 2},
+    {"source": 0, "target": 9,  "bond": 1, "length": 2},
+    {"source": 5, "target": 12, "bond": 1, "length": 2}
+  ]
+}
