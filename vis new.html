@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.link {
+    stroke: #999;
+    stroke-opacity: .6;
+}
+
+.link line.separator {
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+
+
+.node {
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+
+#selected {
+  position:absolute;
+  background-color: AZURE;
+  border-radius: 12px;
+  bottom: 0px;
+  font: 12px sans-serif;
+}
+
+
+
+</style>
+<body>
+  <div id='selected'>
+    <h1>Info</h1> 
+  </div>
+  <form>
+    <h3> Odcinanie 0 <input type="range" id="thersholdSlider" name="points" value = 0 min="0" max="1000" onchange="threshold(this.value);  updateTextInput(this.value)" >1000 </h3>
+  </form>
+  
+  <input type="text" id="textInput" value="" readonly size="1">
+  
+  <div id='visualisation'>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script type="application/json" id="mis">
+
+{"nodes": 
+[{"node": 0}, 
+{"node": 1}, 
+{"node": 2}, 
+{"node": 3}, 
+{"node": 4}], 
+
+"links": 
+[{"source": 0, "length": 500, "target": 4, "bond": 1}, 
+{"source": 1, "length": 43, "target": 3, "bond": 2},
+ {"source": 2, "length": 43, "target": 4, "bond": 2},
+ {"source": 3, "length": 43, "target": 1, "bond": 2},
+ {"source": 4, "length": 43, "target": 2, "bond": 2}]}
+</script>
+
+
+
+<script>
+//reading threshold value from html slider element
+function updateTextInput(val) {
+      document.getElementById('textInput').value=val; 
+    }
+
+//Constants for the SVG
+var width = 1000,
+    height = 1000;
+
+//Set up the colour scale https://github.com/mbostock/d3/wiki/Ordinal-Scales#category20
+var color = d3.scale.category20();
+
+//Set up the force layout
+var force = d3.layout.force()
+    .size([width, height])
+    .linkDistance(function(d) { return d.length;})
+
+//Append a SVG to the body of the html page. Assign this SVG as an object to svg
+var svg = d3.select("#visualisation").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+//Read the data from the mis element where we store internal JSON 
+var mis = document.getElementById('mis').innerHTML;
+graph = JSON.parse(mis);
+//line for threshold cutting
+graphRec=JSON.parse(JSON.stringify(graph));
+
+//Creates the graph data structure out of the json data
+force
+    .nodes(graph.nodes)
+    .links(graph.links)
+	//http://stackoverflow.com/questions/29160907/d3-force-layout-no-overlapping-links */
+	//This line defines the stickness in defined gravity (repulsion, attraction force between nodes)
+	.charge(function(d, i) { return i==0 ? -10000 : -500; })
+	.on("tick", tick)
+    .start();
+
+//Create all the line svgs but without locations yet
+  var link = svg.selectAll(".link")
+      .data(graph.links)
+      .enter().append("g")
+      .attr("class", "link");
+
+  //Defines line between points
+  link.append("line")
+      .style("stroke-width", function(d) { return (d.bond * 2 - 1) * 2 + "px"; })
+  // Trick to make double connection based on bond parameter in json
+  link.filter(function(d) { return d.bond > 1; }).append("line")
+      .attr("class", "separator");
+
+	  
+//Do the same with the circles for the nodes
+var node = svg.selectAll(".node")
+    .data(graph.nodes)
+    .enter().append("circle")
+    .attr("class", "node")
+    .attr("r", 10)
+    .style("fill", function (d) {return color(d.node);})
+    .call(force.drag)
+	.on("click", selectPoint)
+	.on('dblclick', connectedNodes); //Highlithing
+  
+//Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+  function tick() {
+    link.selectAll("line")
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+    
+	node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+		// Collision detection
+	node.each(collide(0.1)); //Added 
+  };
+
+
+// What happens when you click node in graph
+function selectPoint(d) {
+	d3.select('#selected h1')
+      .text("User: "+ d.node)
+	d3.selectAll('.selected').classed('selected', false);
+    d3.select(this).select("circle").classed('selected', true);
+    console.log(d3.select(this).select("circle"));
+}
+
+
+
+// Threshold setting
+
+//adjust threshold
+function threshold(thresh) {
+    graph.links.splice(0, graph.links.length);
+		for (var i = 0; i < graphRec.links.length; i++) {
+			if (graphRec.links[i].length > thresh) {graph.links.push(graphRec.links[i]);}
+		}
+    restart();
+}	
+//Restart the visualisation after any node and link changes
+function restart() {
+	link = link.data(graph.links);
+	console.log(link)
+	link.exit().remove();
+    link.enter().insert("g", ".link")
+	.attr("class", "link")
+	  link.append("line")
+      .style("stroke-width", function(d) { return (d.bond * 2 - 1) * 2 + "px"; })
+  link.filter(function(d) { return d.bond > 1; }).append("line")
+      .attr("class", "separator");
+
+	node = node.data(graph.nodes);
+	node.enter().insert("circle", ".cursor").attr("class", "node").attr("r", 5).call(force.drag);
+	force.start();
+}
+
+
+
+// Nodes overlapping
+
+var padding = 1, // separation between circles
+    radius=8;
+function collide(alpha) {
+  var quadtree = d3.geom.quadtree(graph.nodes);
+  return function(d) {
+    var rb = 2*radius + padding,
+        nx1 = d.x - rb,
+        nx2 = d.x + rb,
+        ny1 = d.y - rb,
+        ny2 = d.y + rb;
+    quadtree.visit(function(quad, x1, y1, x2, y2) {
+      if (quad.point && (quad.point !== d)) {
+        var x = d.x - quad.point.x,
+            y = d.y - quad.point.y,
+            l = Math.sqrt(x * x + y * y);
+          if (l < rb) {
+          l = (l - rb) / l * alpha;
+          d.x -= x *= l;
+          d.y -= y *= l;
+          quad.point.x += x;
+          quad.point.y += y;
+        }
+      }
+      return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+    });
+  };
+}
+
+
+
+
+
+// Connected nodes doubleclick highlight
+
+//Toggle stores whether the highlighting is on
+var toggle = 0;
+
+//Create an array logging what is connected to what
+var linkedByIndex = {};
+for (i = 0; i < graph.nodes.length; i++) {
+    linkedByIndex[i + "," + i] = 1;
+};
+graph.links.forEach(function (d) {
+    linkedByIndex[d.source.index + "," + d.target.index] = 1;
+});
+
+function neighboring(a, b) {
+    return linkedByIndex[a.index + "," + b.index];
+}
+
+function connectedNodes() {
+    if (toggle == 0) {
+        //Reduce the opacity of all but the neighbouring nodes
+        d = d3.select(this).node().__data__;
+        node.style("opacity", function (o) {
+            return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
+        });
+        
+        link.style("opacity", function (o) {
+            return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1;
+        });
+        //Reduce the opacity
+        toggle = 1;
+    } else {
+        //Put them back to opacity=1
+        node.style("opacity", 1);
+        link.style("opacity", 1);
+        toggle = 0;
+    }
+
+}
+
+</script>
