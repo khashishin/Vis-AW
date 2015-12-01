@@ -1,0 +1,154 @@
+
+{
+  "nodes": [
+    {
+      "node": 0
+    },
+    {
+      "node": 1
+    },
+    {
+      "node": 2
+    },
+    {
+      "node": 3
+    },
+    {
+      "node": 4
+    },
+    {
+      "node": 5
+    },
+    {
+      "node": 6
+    },
+    {
+      "node": 7
+    },
+    {
+      "node": 8
+    },
+    {
+      "node": 9
+    },
+    {
+      "node": 10
+    },
+    {
+      "node": 11
+    },
+    {
+      "node": 12
+    },
+    {
+      "node": 13
+    },
+    {
+      "node": 14
+    },
+    {
+      "node": 15
+    },
+    {
+      "node": 16
+    }
+  ],
+  "links": [
+    {
+      "source": 5,
+      "length": 50,
+      "target": 6,
+      "bond": 1
+    },
+    {
+      "source": 6,
+      "length": 50,
+      "target": 7,
+      "bond": 1
+    },
+    {
+      "source": 7,
+      "length": 50,
+      "target": 9,
+      "bond": 1
+    },
+    {
+      "source": 0,
+      "length": 50,
+      "target": 4,
+      "bond": 1
+    },
+    {
+      "source": 16,
+      "length": 50,
+      "target": 1,
+      "bond": 1
+    },
+    {
+      "source": 1,
+      "length": 43,
+      "target": 3,
+      "bond": 2
+    },
+    {
+      "source": 2,
+      "length": 43,
+      "target": 4,
+      "bond": 2
+    },
+    {
+      "source": 13,
+      "length": 43,
+      "target": 15,
+      "bond": 2
+    },
+    {
+      "source": 11,
+      "length": 43,
+      "target": 15,
+      "bond": 2
+    },
+    {
+      "source": 15,
+      "length": 43,
+      "target": 9,
+      "bond": 2
+    },
+    {
+      "source": 12,
+      "length": 43,
+      "target": 15,
+      "bond": 2
+    },
+	{
+      "source": 14,
+      "length": 43,
+      "target": 2,
+      "bond": 1
+    },
+		{
+      "source": 10,
+      "length": 86,
+      "target": 8,
+      "bond": 1
+    },
+		{
+      "source": 1,
+      "length": 86,
+      "target": 14,
+      "bond": 1
+    },
+		{
+      "source": 2,
+      "length": 106,
+      "target": 6,
+      "bond": 1
+    },
+		{
+      "source": 8,
+      "length": 126,
+      "target": 16,
+      "bond": 1
+    }
+  ]
+}

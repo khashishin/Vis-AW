@@ -1,0 +1,11 @@
+{"nodes": 
+[{"node": 0}, 
+{"node": 1}, 
+{"node": 2}, 
+{"node": 3}, 
+{"node": 4}], 
+
+"links": 
+[{"source": 0, "length": 110, "target": 4, "bond": 1}, 
+{"source": 1, "length": 80, "target": 3, "bond": 2},
+ {"source": 2, "length": 60, "target": 4, "bond": 2}]}
