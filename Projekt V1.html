@@ -50,7 +50,7 @@ font:32px arial;
   
 <form>
     <div id="slider"> 
-	Wartość Krytyczna K:  0     <input type="range" id="thersholdSlider" name="points" value = 0 min="0" max="4" onchange="threshold(this.value);  updateTextInput(this.value)" >     4
+	Wartość krytyczna 'K':  0     <input type="range" id="thersholdSlider" name="points" value = 0 min="0" max="4" onchange="threshold(this.value);  updateTextInput(this.value)" >     4
 	</div>
 	
 	<input type="text" id="textInput" value="" readonly size="1">
@@ -62,7 +62,7 @@ font:32px arial;
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-<script type="application/json" id="mis">
+<script type="application/json" id="data">
 {
   "nodes": [
     {
@@ -225,9 +225,10 @@ function updateTextInput(val) { document.getElementById('textInput').value=val; 
 //Constants for the SVG image that will be the background for our visualisation
 var width = 2550,
     height = 1100
+	// default radius of node
 	r = 8
 	//Offests sets the offset of text labels.
-	offset=10;
+	offset=6;
 
 //Append a SVG to the body of the html page. Assign this SVG as an object to svg
 var svg = d3.select("#visualisation").append("svg")
@@ -252,10 +253,18 @@ var force = d3.layout.force()
     .linkDistance(function(d) { return d.length;})
     .size([width, height]);
 
-//Read the data from the mis element in HTML
-var mis = document.getElementById('mis').innerHTML;
-graph = JSON.parse(mis);
+//Read the data from the data element in HTML
+var data = document.getElementById('data').innerHTML;
+graph = JSON.parse(data);
+r = define_node_radius();
 graphRec = JSON.parse(JSON.stringify(graph)); //This line is used so the programm can read threshold values to cut
+
+//With this function we define the size of a node based on the number of points we want to visualise, the method is more or less arbitraty fit the points visually.
+function define_node_radius() {
+var radius = 500/graph.nodes.length
+if (radius > 20) {radius=20}
+return radius
+}
 
 //Creates the graph data structure out of the json data that is imported into D3 force layout
 force.nodes(graph.nodes)
@@ -278,14 +287,14 @@ var node = svg.selectAll("g")
 	.call(force.drag)
 	.on("click", selectPoint)
 	.on('dblclick', connectedNodes)	//Highlithing;
-
+	
 //Append SVG circle to the (g) element
 var circles = node.append("circle")
     .attr("class", "node")
     .attr("r", r)
     .style("fill", function (d) {return color(d.node);})
 	.style("stroke", "gray")
-	
+
 //Append text label to the element
 var TextLabels = node.append("text")
 				 .text(function(d) {return d.node; })
