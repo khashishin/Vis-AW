@@ -261,8 +261,11 @@ graphRec = JSON.parse(JSON.stringify(graph)); //This line is used so the program
 
 //With this function we define the size of a node based on the number of points we want to visualise, the method is more or less arbitraty fit the points visually.
 function define_node_radius() {
-var radius = 500/graph.nodes.length
+var radius = 250/graph.nodes.length
+if (radius<1) {radius=1}
 if (radius > 20) {radius=20}
+//Redefine text offset to be consistent with the node
+offset = radius-5
 return radius
 }
 
