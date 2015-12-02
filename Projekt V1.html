@@ -42,10 +42,7 @@ font:32px arial;
 </style>
 
 
-
-
 <body>
-
 <div id="header">Wizualizacja dendrytu wrocławskiego</div>
   
 <form>
@@ -223,8 +220,8 @@ font:32px arial;
 function updateTextInput(val) { document.getElementById('textInput').value=val; }
 
 //Constants for the SVG image that will be the background for our visualisation
-var width = 2550,
-    height = 1100
+var width = window.screen.width,
+    height = window.screen.height
 	// default radius of node
 	r = 8
 	//Offests sets the offset of text labels.
@@ -353,16 +350,10 @@ function restart() {
 var toggle = 0;
 //Create an array logging what is connected to what
 var linkedByIndex = {};
-for (i = 0; i < graph.nodes.length; i++) {
-    linkedByIndex[i + "," + i] = 1;
-};
-graph.links.forEach(function (d) {
-    linkedByIndex[d.source.index + "," + d.target.index] = 1;
-});
+for (i = 0; i < graph.nodes.length; i++) {linkedByIndex[i + "," + i] = 1;};
+graph.links.forEach(function (d) {linkedByIndex[d.source.index + "," + d.target.index] = 1;});
 
-function neighboring(a, b) {
-    return linkedByIndex[a.index + "," + b.index];
-}
+function neighboring(a, b) {return linkedByIndex[a.index + "," + b.index];}
 
 function connectedNodes() {
     if (toggle == 0) {
