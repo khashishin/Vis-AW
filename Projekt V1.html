@@ -225,7 +225,9 @@ function updateTextInput(val) { document.getElementById('textInput').value=val; 
 //Constants for the SVG image that will be the background for our visualisation
 var width = 2550,
     height = 1100
-	r = 8;
+	r = 8
+	//Offests sets the offset of text labels.
+	offset=10;
 
 //Append a SVG to the body of the html page. Assign this SVG as an object to svg
 var svg = d3.select("#visualisation").append("svg")
@@ -295,12 +297,12 @@ force.on("tick", function () {
         .attr("x2", function (d) {return d.target.x;})
         .attr("y2", function (d) {return d.target.y;});
 		
-	circles.attr("cx", function(d) { return d.x = Math.max(r, Math.min(width - r*2, d.x)); })
-        .attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r*2, d.y)); });
+	circles.attr("cx", function(d) { return d.x = Math.max(r, Math.min(width - r+5, d.x)); })
+        .attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r+5, d.y)); });
 
 	TextLabels
-	    .attr("x", function (d) {return d.x;})
-        .attr("y", function (d) {return d.y;});
+	    .attr("x", function (d) {return d.x+offset;})
+        .attr("y", function (d) {return d.y-offset;});
 });
 
 
