@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-
 .node {
     stroke: #fff;
     stroke-width: 1.5px;
@@ -21,24 +20,45 @@
 #selected {
   position:absolute;
   background-color: WHITE;
-  border-radius: 12px;
+  border-radius: 4px;
   bottom: 0px;
-  font: 10px sans-serif;
+  font: 12px sans-serif;
 }
 
+#header {
+font: 50px arial;
+margin: auto;
+width: 38%;
+}
 
+#textInput{
+position: fixed;
+font: 28px arial;
+}
+
+#slider {
+font:32px arial;
+}
 </style>
+
+
+
+
 <body>
-  <div id='selected'>
-    <h1>Info</h1> 
-  </div>
-  <form>
-    <h3> Odcinanie 0 <input type="range" id="thersholdSlider" name="points" value = 0 min="0" max="125" onchange="threshold(this.value);  updateTextInput(this.value)" >125 </h3>
-  </form>
+
+<div id="header">Wizualizacja dendrytu wrocławskiego</div>
   
-  <input type="text" id="textInput" value="" readonly size="1">
+<form>
+    <div id="slider"> 
+	Wartość Krytyczna K:  0     <input type="range" id="thersholdSlider" name="points" value = 0 min="0" max="4" onchange="threshold(this.value);  updateTextInput(this.value)" >     4
+	</div>
+	
+	<input type="text" id="textInput" value="" readonly size="1">
+	
+</form>
   
-  <div id='visualisation'>
+<div id='visualisation'>
+<div id='selected'> <h1>Info</h1> </div>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
@@ -199,29 +219,34 @@
 </script>
 
 <script>
-
-
 //Reading threshold value from html slider element
-function updateTextInput(val) {
-      document.getElementById('textInput').value=val; 
-    }
+function updateTextInput(val) { document.getElementById('textInput').value=val; }
 
 //Constants for the SVG image that will be the background for our visualisation
-var width = 1900,
-    height = 800;
-
+var width = 2550,
+    height = 1100
+	r = 8;
 
 //Append a SVG to the body of the html page. Assign this SVG as an object to svg
 var svg = d3.select("#visualisation").append("svg")
     .attr("width", width)
-    .attr("height", height);	
-
+    .attr("height", height);
+	
+//Definind ounding box that will b shown on visualisation
+svg.append("svg:rect")
+    .attr("width", width)
+    .attr("height", height)
+    .style("stroke", "#000")
+	.style("fill", "WHITE");
+	
 //Set up the colour scale that will be used for differentiating nodes
 var color = d3.scale.category20();
 
 //Set up the force layout that is the base for showing nodes and graphs
 var force = d3.layout.force()
     .charge(-120)
+	//Gravity value defines eg. the behaviour of nodes when in unconnected state (how strong is the force of attraction/rejection between them )
+	.gravity(0.012)
     .linkDistance(function(d) { return d.length;})
     .size([width, height]);
 
@@ -255,7 +280,7 @@ var node = svg.selectAll("g")
 //Append SVG circle to the (g) element
 var circles = node.append("circle")
     .attr("class", "node")
-    .attr("r", 8)
+    .attr("r", r)
     .style("fill", function (d) {return color(d.node);})
 	.style("stroke", "gray")
 	
@@ -270,21 +295,21 @@ force.on("tick", function () {
         .attr("x2", function (d) {return d.target.x;})
         .attr("y2", function (d) {return d.target.y;});
 		
-    circles.attr("cx", function (d) {return d.x;})
-        .attr("cy", function (d) {return d.y;});
-		
+	circles.attr("cx", function(d) { return d.x = Math.max(r, Math.min(width - r*2, d.x)); })
+        .attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r*2, d.y)); });
+
 	TextLabels
 	    .attr("x", function (d) {return d.x;})
         .attr("y", function (d) {return d.y;});
 });
 
 
-
 //Adjust cutting/splicing links threshold
 function threshold(thresh) {
+//!!!!!!!!!!!!!!!!!!!!TODO WARTOSC KRYTYCZNA HARDCODED NA 40 DO POPRAWY!!!!!!!!!!!!!!!!!!!!
     graph.links.splice(0, graph.links.length);
 		for (var i = 0; i < graphRec.links.length; i++) {
-			if (graphRec.links[i].length > thresh) {graph.links.push(graphRec.links[i]);}
+			if (graphRec.links[i].length > thresh*40) {graph.links.push(graphRec.links[i]);}
 		}
     restart();
 }
@@ -329,20 +354,15 @@ function connectedNodes() {
     if (toggle == 0) {
         //Reduce the opacity of all but the neighbouring nodes
         d = d3.select(this).node().__data__;
-        node.style("opacity", function (o) {
-            return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
-        });
-        link.style("opacity", function (o) {
-            return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1;
-        });
+        node.style("opacity", function (o) {return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;});
+        link.style("opacity", function (o) {return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1;});
         //Reduce the opacity
-        toggle = 1;
-    } else {
+        toggle = 1;}
+	
+	else {
         //Put them back to opacity=1
         node.style("opacity", 1);
         link.style("opacity", 1);
-        toggle = 0;
-    }
+        toggle = 0;}
 }
-
 </script>
