@@ -1,52 +1,18 @@
 import json
 import numpy as np
+import itertools
 
 
-N = 5
+N = 8
 final_number_of_groups = 1
 bigM = 9999999
 nodes, links = [], []
+
 groups = []
 groups_maping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
 distance_metric = "closest neighbour"
-
-class Graph:
-
-    def __init__(self, links):
-        """ initializes a graph object """
-        graph_dict = {}
-
-        for link in links:
-            if link["source"] not in graph_dict.keys():
-                graph_dict[link["source"]] = [link["target"]]
-            else:
-                graph_dict[link["source"]].append(link["target"])
-
-        self.__graph_dict = graph_dict
-        # print self.__graph_dict
-
-    def is_connected(self, vertices_encountered=None, start_vertex=None):
-        """
-        Determines if the graph is connected
-        http://www.python-course.eu/graphs_python.php
-        """
-        if vertices_encountered is None:
-            vertices_encountered = set()
-        gdict = self.__graph_dict
-        vertices = list(gdict.keys())
-        if not start_vertex:
-            # Choose a vertex from graph as a starting point
-            start_vertex = vertices[0]
-        vertices_encountered.add(start_vertex)
-        if len(vertices_encountered) != len(vertices):
-            for vertex in gdict[start_vertex]:
-                if vertex not in vertices_encountered:
-                    if self.is_connected(vertices_encountered, vertex):
-                        return True
-        else:
-            return True
-        return False
-
+original_matrix = []
+groups_to_join = []
 
 def get_fixed_sample():
     return [[9999999, 8, 9, 6, 2],
@@ -54,6 +20,17 @@ def get_fixed_sample():
             [9, 5, 9999999, 4, 0],
             [6, 0, 4, 9999999, 5],
             [2, 1, 0, 5, 9999999]]
+
+def get_3_level_sample():
+    return [
+[9999999,	1,	2,	9,	9,	9,	9,	9],
+[1,	9999999,	9,	9,	9,	9,	9,	9],
+[2,	9,	9999999,	1,	3,	9,	9,	9],
+[9,	9,	1,	9999999,	9,	9,	9,	9],
+[9,	9,	3,	9,	9999999,	1,	2,	9],
+[9,	9,	9,	9,	1,	9999999,	9,	9],
+[9,	9,	9,	9,	2,	9,	9999999,	1],
+[9,	9,	9,	9,	9,	9,	1,	9999999]]
 
 
 def get_sample_data():
@@ -68,16 +45,15 @@ def get_sample_data():
 
 
 def calculate_closest_nodes(matrix, first_iteration):
-    points = [x for x in range(N)]
+    # points = [x for x in range(N)]
     neighbours_dict = {}
-    # print matrix
-
+    print 'Calculating closest nodes... Current matrix:'
     for row in range(len(matrix)):
         print matrix[row]
         row_min = min(matrix[row])
         for col in range(len(matrix[row])):
 
-            if matrix[row][col] == row_min :
+            if matrix[row][col] == row_min:
                 # print row, col, matrix[row][col], 'kek'
 
                 neighbours_dict[row] = {"target": col, "bond": 1, "length": matrix[row][col]}
@@ -90,10 +66,53 @@ def calculate_closest_nodes(matrix, first_iteration):
                 break
 
     # print matrix
+    print "Found neighbours:"
     print neighbours_dict
-    for key, value in neighbours_dict.iteritems():
-        # print key, value
-        add_link(key, value["target"], value["bond"], value["length"])
+    remove_duplicates_from_groups()
+
+
+    if first_iteration:
+        for key, value in neighbours_dict.iteritems():
+            add_link(key, value["target"], value["bond"], value["length"])
+
+    else:  # If we join groups with groups/nodes:
+        new_groups = groups
+        for key, value in neighbours_dict.iteritems():
+            if len(groups[key]) > 1:
+
+                print "Want to join", groups[key], "with", groups[value["target"]]
+                mini = (0, 0, bigM)
+                for node in groups[key]:
+                    for node2 in groups[value["target"]]:
+                        if original_matrix[node][node2] < mini[2]:
+                            mini = (node, node2,  original_matrix[node][node2])
+                        # print node, node2, "distance:", original_matrix[node][node2]
+                # print "Joining by", mini
+                add_link(mini[0], mini[1], 1, mini[2])
+                add_to_groups_joining(key, value["target"])
+
+        join_groups()
+
+def add_to_groups_joining(group1_id, group2_id):
+    groups_to_join.append(sorted((group1_id, group2_id)))
+
+def join_groups():
+    groups_to_join.sort()
+    final_joining = list(k for k,_ in itertools.groupby(groups_to_join))  # Deleting BA if (AB and BA) - duplicates
+    # print groups
+    new_groups = []
+    for joining in final_joining:
+        new_groups.append(groups[joining[0]] + groups[joining[1]])
+
+    set_as_new_groups(new_groups)
+
+def set_as_new_groups(new_groups):
+    del groups[:]
+    for group in new_groups:
+        groups.append(group)
+    # TODO od tad: mam nowe grupy, juz polaczone, teraz caly proces dalej zapetlic. Zaczac od przeliczenia groups_maping
+
+
 
 def add_point_to_group(point, point2):
     for group in groups:
@@ -112,6 +131,7 @@ def rebuild_matrix(links):
     for group in groups:
         groups_maping[c] = group
         c += 1
+    print "Rebuilding matrix... New group maping:"
     print groups_maping
 
     return get_distance_between_groups()
@@ -123,7 +143,7 @@ def get_distance_between_groups():
     # TODO: dodac wiecej opcji liczenia dystansu
 
 def get_closest_neighbour_distance():
-    n= len(groups)
+    n = len(groups)
     result_matrix = [[bigM for _ in range(n)] for _ in range(n)]
     for row in range(n):
         for col in range(n):
@@ -132,7 +152,7 @@ def get_closest_neighbour_distance():
             else:
                 distance = min(get_all_distances(groups_maping[row], groups_maping[col]))
                 # print "dist", distance
-                result_matrix[row][col]=distance
+                result_matrix[row][col] = distance
     return result_matrix
 
 def get_all_distances(group1, group2):
@@ -158,11 +178,13 @@ def get_json():
               "links": links}
     return json.dumps(result)
 
+
 add_nodes()
-matrix = get_fixed_sample()
+# matrix = get_fixed_sample()
+matrix= get_3_level_sample()
+original_matrix = matrix
 
 calculate_closest_nodes(matrix, True)
-# graph = Graph(links)
 if len(groups) == final_number_of_groups:
     # "Jego glowna zaleta jest mozliwosc okreslenia liczby wynikowych grup."
     # https://pl.wikipedia.org/wiki/Dendryt_wroc%C5%82awski
@@ -173,7 +195,12 @@ else:
     matrix = rebuild_matrix(links)
     calculate_closest_nodes(matrix, False)  # TODO: od tad - a konkretrnie False przy first_iteration. Polaczyc odpowiednie krawedzie pomiedzy grupami
 
+# remove_duplicates_from_groups()
+# matrix = rebuild_matrix(links)
+# calculate_closest_nodes(matrix, False)
 
+print "Links:"
+for link in links:
+    print link
 print groups
-
-
+# print get_json()
