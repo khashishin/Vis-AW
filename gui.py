@@ -5,9 +5,9 @@ from pandas import read_excel
 import pandas
 import algorithm as alg
 
-sheet_list = ["Arkusz1","Arkusz2", "Arkusz3"] # TODO
+sheet_list = ["Wybierz najpierw plik"]
 listbox_height = 4
-
+filename = ""
 root = Tk()
 
 excel_file = StringVar()
@@ -52,15 +52,22 @@ def get_filename():
     excel_file.set(filename)
     xls = pandas.ExcelFile(filename)
     prepare_listbox(xls.sheet_names)
+
     print excel_file.get() # TODO: dodac Label z nazwa pliku?
 
 def pressed():
     print "Start calculations"
     try:
         print listbox2.get(listbox2.curselection())
-        main(1)
-    except IndexError:
+        sheet = read_excel(filename, sheetname=listbox2.get(listbox2.curselection())) # TODO: nie zczytuje excela
+        # print_excel_content(sheet)
+        # alg.run(0)
+    except (IndexError, TclError):
         tkMessageBox.showinfo("Blad", "Wybierz plik i arkusz excela")
 
+def print_excel_content(excel_file):
+    for x in excel_file.columns:
+        print x
+
 if __name__ == '__main__':
-    main(1)
+    main()
