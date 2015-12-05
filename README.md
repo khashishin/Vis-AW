@@ -1,11 +1,9 @@
 # Vis-AW
 
-W pliku vis_new.html zembedowany jest plik JSONa, zawierający dane do dendrytu.
+Jak powinien być sformatowany plik Excela:
 
-Obecna wersja algorytmu jest wersją roboczą.
-TODO w niej: dokończyć, sprawdzic czy dobrze działa, dodać import danych z CSV/Excela, generować HTMLa wynikowego(może od razu włączać Mozille?)
-
-W Pythonie:
--edytowac HTML wstawiajac JSONa (w miejsce skryptu "script type="application/json" id="data"")
--GUI
--wlaczanie przegladarki
+  - W arkuszu z danymi nie może znajdować sie nic poza macierza odleglosci
+  - Kolumna "A" - pierwsza komórka (A1) pusta - nastepne zawieraja nazwy obiektow
+  - Wiersz "1" - pierwsza komórka (A1) pusta - nastepne zawieraja nazwy obiektow w takiej samej kolejnosci jak te w kolumnie "A"
+  - Macierz musi być symetryczna
+  - Nie ma znaczenia co znajdzie sie na przekatnej macierzy - moga to byc zera, puste komorki itd.
