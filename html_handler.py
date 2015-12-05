@@ -1,10 +1,22 @@
 import datetime
+import json
 
-class Writer:
 
-    def write_html(self, json):
-        file = open('htmls/part1.txt', 'r')
-        print file.read()
+class Handler:
+
+    def __init__(self, j):
+        self.j = j  # Not named "json" to avoid messing with namespace.
+        self.filename = ""
+
+    def write_html(self):
+        now = datetime.datetime.now()
+        file1 = open('htmls/part1.txt', 'r')
+        file2 = open('htmls/part2.txt', 'r')
+        self.filename = str("htmls/"+now.strftime("%Y-%m-%d_%H-%M")+".html")
+        with open(self.filename, "w") as out_file:
+            out_file.write(file1.read())
+            out_file.write(json.dumps(self.j))
+            out_file.write(file2.read())
 
 test_json = {"nodes": [{"node": 0}, {"node": 1}, {"node": 2}
                        , {"node": 3}, {"node": 4},
@@ -23,5 +35,6 @@ test_json = {"nodes": [{"node": 0}, {"node": 1}, {"node": 2}
                        {"source": 4, "length": 2, "target": 6, "bond": 1},
                        {"source": 6, "length": 2, "target": 4, "bond": 1}]}
 
-w = Writer()
-w.write_html(test_json)
+
+w = Handler(test_json)
+# w.write_html() # This is where the magic happens. TODO: How will user open visualisation?

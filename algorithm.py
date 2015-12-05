@@ -1,9 +1,9 @@
 import json
 import numpy as np
 import itertools
-import html_writer
+import html_handler
 
-bigM = 9999999
+big_m = 9999999
 
 
 class Dendrite:
@@ -41,7 +41,7 @@ class Dendrite:
         for row in range(self.N):
             for column in range(self.N):
                 if row == column:
-                    b_symm[row][column] = bigM
+                    b_symm[row][column] = big_m
         return b_symm
 
 
@@ -78,7 +78,7 @@ class Dendrite:
                 if len(self.groups[key]) > 1:
 
                     print "Want to join", self.groups[key], "with", self.groups[value["target"]]
-                    mini = (0, 0, bigM) # Minimal distance and it's nodes
+                    mini = (0, 0, big_m) # Minimal distance and it's nodes
                     for node in self.groups[key]:
                         for node2 in self.groups[value["target"]]:
                             if self.original_matrix[node][node2] < mini[2]:
@@ -138,7 +138,7 @@ class Dendrite:
 
     def get_closest_neighbour_distance(self):
         n = len(self.groups)
-        result_matrix = [[bigM for _ in range(n)] for _ in range(n)]
+        result_matrix = [[big_m for _ in range(n)] for _ in range(n)]
         for row in range(n):
             for col in range(n):
                 if row == col:  # TODO zrobic tak zeby tylko jedna polowa macierzy sie przeliczala i kopiowala, a nie ze obie robia to samo 2 razy
@@ -196,7 +196,7 @@ class Dendrite:
         print self.get_json()
 
     def write_html(self):
-        w = html_writer.Writer()
+        w = html_handler.Handler()
         w.write_html(self.get_json())
 
 def run(data):
