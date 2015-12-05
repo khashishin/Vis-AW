@@ -1,9 +1,9 @@
 from Tkinter import *
 import tkMessageBox
 from tkFileDialog import askopenfilename
-from pandas import read_excel
+import sys
 import xlrd
-# import pandas
+import pandas
 import algorithm as alg
 
 class GUI:
@@ -18,10 +18,7 @@ class GUI:
         self.excel_file.set("testText1")
 
         self.listbox2 = Listbox(self.root, height=self.listbox_height, exportselection=0)
-
-        #label_file = Label(root, textvariable=excel_file)
-        #label_file.grid(row=2)
-        #label_file.pack()
+        self.objects_maping = {}  # Saves original objects names.
 
     def prepare_listbox(self,l):
         self.listbox2.grid(row=4)
@@ -33,7 +30,7 @@ class GUI:
 
         self.root.title("Dendryt")
         self.root.resizable(width=FALSE, height=FALSE)
-        self.root.geometry('{}x{}'.format(300, 300))
+        # self.root.geometry('{}x{}'.format(300, 300))
         self.prepare_listbox(self.sheet_list)
 
         label1 = Label(self.root, text="Wybierz plik excela do wczytania")
@@ -57,7 +54,7 @@ class GUI:
         xls = pandas.ExcelFile(self.filename)
         self.prepare_listbox(xls.sheet_names)
 
-        print self.excel_file.get() # TODO: dodac Label z nazwa pliku?
+        # print self.excel_file.get() # TODO: dodac Label z nazwa pliku?
 
     def pressed(self):
         print "Start calculations"
@@ -66,23 +63,42 @@ class GUI:
             print self.listbox2.get(self.listbox2.curselection())
             excel = xlrd.open_workbook(str(self.filename))
             sheet = excel.sheet_by_index(self.listbox2.curselection()[0])
-            self.print_excel_content(sheet)
+            self.get_excel_content(sheet)
             # sheet = read_excel(filename, sheetname=listbox2.get(listbox2.curselection())) # TODO: nie zczytuje excela
             # s = pandas.ExcelFile(filename)
             # s.parse(listbox2.get(listbox2.curselection()))
             # print_excel_content(s)
             # alg.run(0)
-        except (IndexError, TclError):
+        except (IndexError, TclError) as e:
+            print "Error:",e
             tkMessageBox.showinfo("Blad", "Wybierz plik i arkusz excela")
 
-    def print_excel_content(self,excel_file):
-        num_cols = excel_file.ncols   # Number of columns
+    def set_objects_maping(self, objects_list):
+        c = 0
+        for object in objects_list:
+            self.objects_maping[c] = object
+            c += 1
+
+        print 'Maping:', self.objects_maping
+
+    def get_excel_content(self, excel_file):
+        objects = []
+        data = []
+        num_cols = excel_file.ncols
         for row_idx in range(0, excel_file.nrows):    # Iterate through rows
-            print ('-'*40)
-            print ('Row: %s' % row_idx)   # Print row number
-            for col_idx in range(0, num_cols):  # Iterate through columns
-                cell_obj = excel_file.cell(row_idx, col_idx)  # Get cell object by row, col
-                print ('Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
+            if row_idx != 0:
+                data.append(excel_file.row_values(row_idx)[1:])
+            else:
+                print excel_file.row_values(row_idx)
+                for col_idx in range(0, num_cols):
+                    cell_obj = excel_file.cell(row_idx, col_idx)
+                    objects.append(str(cell_obj.value))
+
+        objects.pop(0)
+        self.set_objects_maping(objects)
+        self.data = data
+
+
 
 if __name__ == '__main__':
     g = GUI()

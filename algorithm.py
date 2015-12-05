@@ -8,7 +8,7 @@ class Dendrite:
 
         self.N = 8
         self.final_number_of_groups = 1
-
+        self.data = data
         self.nodes, self.links = [], []
         self.matrix = []
 
@@ -185,7 +185,10 @@ class Dendrite:
     def calculate(self,):
         self.add_nodes()
         # matrix = get_fixed_sample()
-        self.matrix= self.get_3_level_sample()
+        if self.data == 0:
+            self.matrix= self.get_3_level_sample()
+        else:
+            self.matrix = self.read_data()
         self.original_matrix = self.matrix
 
         self.calculate_closest_nodes(self.matrix, True)
@@ -208,6 +211,10 @@ class Dendrite:
             print link
         print self.groups
         # print get_json()
+
+    def read_data(self):
+        print self.data
+
 
 def run(data):
     d = Dendrite(data)
