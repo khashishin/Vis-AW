@@ -3,7 +3,7 @@ import tkMessageBox
 from tkFileDialog import askopenfilename
 from pandas import read_excel
 import xlrd
-import pandas
+# import pandas
 import algorithm as alg
 
 class GUI:
