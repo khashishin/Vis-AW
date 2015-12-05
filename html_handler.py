@@ -1,6 +1,7 @@
 import datetime
 import json
-
+import webbrowser
+import os
 
 class Handler:
 
@@ -18,10 +19,12 @@ class Handler:
             out_file.write(json.dumps(self.j))
             out_file.write(file2.read())
 
-test_json = {"nodes": [{"node": 0}, {"node": 1}, {"node": 2}
-                       , {"node": 3}, {"node": 4},
-                       {"node": 5}, {"node": 6},
-                       {"node": 7}],
+    def open_visualisation(self):
+        webbrowser.open('file://' + os.path.realpath(self.filename))
+
+
+test_json = {"nodes": [{"node": 0}, {"node": 1}, {"node": 2}, {"node": 3},
+                       {"node": 4}, {"node": 5}, {"node": 6}, {"node": 7}],
              "links": [{"source": 0, "length": 1, "target": 1, "bond": 2},
                        {"source": 1, "length": 1, "target": 0, "bond": 2},
                        {"source": 2, "length": 1, "target": 3, "bond": 2},
@@ -35,6 +38,7 @@ test_json = {"nodes": [{"node": 0}, {"node": 1}, {"node": 2}
                        {"source": 4, "length": 2, "target": 6, "bond": 1},
                        {"source": 6, "length": 2, "target": 4, "bond": 1}]}
 
-
-w = Handler(test_json)
-# w.write_html() # This is where the magic happens. TODO: How will user open visualisation?
+if __name__ == '__main__':
+    w = Handler(test_json)
+    w.write_html()# This is where the magic happens. TODO: How will user open visualisation?
+    w.open_visualisation()
