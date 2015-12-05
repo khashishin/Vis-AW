@@ -68,7 +68,8 @@ class GUI:
             # s = pandas.ExcelFile(filename)
             # s.parse(listbox2.get(listbox2.curselection()))
             # print_excel_content(s)
-            # alg.run(0)
+            # print self.data
+            alg.run(self.data)
         except (IndexError, TclError) as e:
             print "Error:",e
             tkMessageBox.showinfo("Blad", "Wybierz plik i arkusz excela")

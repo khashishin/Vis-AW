@@ -1,12 +1,15 @@
 import json
 import numpy as np
 import itertools
+import html_writer
 
 bigM = 9999999
+
+
 class Dendrite:
     def __init__(self, data):
 
-        self.N = 8
+        self.N = 8        # TODO: remove in production
         self.final_number_of_groups = 1
         self.data = data
         self.nodes, self.links = [], []
@@ -18,14 +21,8 @@ class Dendrite:
         self.original_matrix = []
         self.groups_to_join = []
 
-    def get_fixed_sample(self):
-        return [[9999999, 8, 9, 6, 2],
-                [8, 9999999, 5, 0, 1],
-                [9, 5, 9999999, 4, 0],
-                [6, 0, 4, 9999999, 5],
-                [2, 1, 0, 5, 9999999]]
-
     def get_3_level_sample(self):
+        # TODO: remove in production
         return [
     [9999999,	1,	2,	9,	9,	9,	9,	9],
     [1,	9999999,	9,	9,	9,	9,	9,	9],
@@ -36,8 +33,8 @@ class Dendrite:
     [9,	9,	9,	9,	2,	9,	9999999,	1],
     [9,	9,	9,	9,	9,	9,	1,	9999999]]
 
-
     def get_sample_data(self):
+        # TODO: remove in production
         b = np.random.random_integers(0, 10, size=(self.N, self.N))
         b_symm = (b + b.T) / 2
 
@@ -56,10 +53,7 @@ class Dendrite:
             print matrix[row]
             row_min = min(matrix[row])
             for col in range(len(matrix[row])):
-
                 if matrix[row][col] == row_min:
-                    # print row, col, matrix[row][col], 'kek'
-
                     neighbours_dict[row] = {"target": col, "bond": 1, "length": matrix[row][col]}
                     self.add_point_to_group(row, col)
 
@@ -80,12 +74,11 @@ class Dendrite:
                 self.add_link(key, value["target"], value["bond"], value["length"])
 
         else:  # If we join groups with groups/nodes:
-            new_groups = self.groups
             for key, value in neighbours_dict.iteritems():
                 if len(self.groups[key]) > 1:
 
                     print "Want to join", self.groups[key], "with", self.groups[value["target"]]
-                    mini = (0, 0, bigM)
+                    mini = (0, 0, bigM) # Minimal distance and it's nodes
                     for node in self.groups[key]:
                         for node2 in self.groups[value["target"]]:
                             if self.original_matrix[node][node2] < mini[2]:
@@ -100,7 +93,7 @@ class Dendrite:
     def add_to_groups_joining(self,group1_id, group2_id):
         self.groups_to_join.append(sorted((group1_id, group2_id)))
 
-    def join_groups(self,):
+    def join_groups(self):
         self.groups_to_join.sort()
         final_joining = list(k for k,_ in itertools.groupby(self.groups_to_join))  # Deleting BA if (AB and BA) - duplicates
         # print groups
@@ -116,9 +109,7 @@ class Dendrite:
             self.groups.append(group)
         # TODO od tad: mam nowe grupy, juz polaczone, teraz caly proces dalej zapetlic. Zaczac od przeliczenia groups_maping
 
-
-
-    def add_point_to_group(self,point, point2):
+    def add_point_to_group(self, point, point2):
         for group in self.groups:
             if point2 in group:
                 group.append(point)
@@ -140,7 +131,6 @@ class Dendrite:
 
         return self.get_distance_between_groups()
 
-
     def get_distance_between_groups(self):
         if self.distance_metric == "closest neighbour":
             return self.get_closest_neighbour_distance()
@@ -160,41 +150,34 @@ class Dendrite:
         return result_matrix
 
     def get_all_distances(self, group1, group2):
-        # print "-",group1, group2
         result = []
         for x in group1:
             for y in group2:
-                # print x,y, matrix[x][y]
                 result.append(self.matrix[x][y])
         return result
 
     def add_link(self,node1, node2, bond, length):
         self.links.append({"source": node1, "target": node2, "bond": bond, "length": length})
 
-
-    def add_nodes(self,):
+    def add_nodes(self):
         for x in range(self.N):
             self.nodes.append({"node": x})
 
-
-    def get_json(self,):
+    def get_json(self):
         result = {"nodes": self.nodes,
                   "links": self.links}
         return json.dumps(result)
 
     def calculate(self,):
         self.add_nodes()
-        # matrix = get_fixed_sample()
         if self.data == 0:
-            self.matrix= self.get_3_level_sample()
+            self.matrix = self.get_3_level_sample()
         else:
-            self.matrix = self.read_data()
+            self.matrix = self.data
         self.original_matrix = self.matrix
 
         self.calculate_closest_nodes(self.matrix, True)
         if len(self.groups) == self.final_number_of_groups:
-            # "Jego glowna zaleta jest mozliwosc okreslenia liczby wynikowych grup."
-            # https://pl.wikipedia.org/wiki/Dendryt_wroc%C5%82awski
              # End of the work.
             print self.get_json()
         else:
@@ -210,11 +193,11 @@ class Dendrite:
         for link in self.links:
             print link
         print self.groups
-        # print get_json()
+        print self.get_json()
 
-    def read_data(self):
-        print self.data
-
+    def write_html(self):
+        w = html_writer.Writer()
+        w.write_html(self.get_json())
 
 def run(data):
     d = Dendrite(data)
