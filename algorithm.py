@@ -7,7 +7,7 @@ big_m = 9999999
 
 
 class Dendrite:
-    def __init__(self, data):
+    def __init__(self, data, metric):
 
         self.N = 8        # TODO: remove in production
         self.final_number_of_groups = 1
@@ -17,7 +17,9 @@ class Dendrite:
 
         self.groups = []
         self.groups_maping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
-        self.distance_metric = "closest neighbour"
+        self.metrics_dict ={"Najblizszy sasiad": "closest neighbour",
+                            "Najdalszy sasiad": "farthest neighbour"}
+        self.distance_metric = self.metrics_dict[metric]
         self.original_matrix = []
         self.groups_to_join = []
 
@@ -133,10 +135,12 @@ class Dendrite:
 
     def get_distance_between_groups(self):
         if self.distance_metric == "closest neighbour":
-            return self.get_closest_neighbour_distance()
+            return self.get_closest_neighbour_distance("closest")
+        if self.distance_metric == "farthest neighbour":
+            return self.get_closest_neighbour_distance("farthest")
         # TODO: dodac wiecej opcji liczenia dystansu
 
-    def get_closest_neighbour_distance(self):
+    def get_closest_neighbour_distance(self, type):
         n = len(self.groups)
         result_matrix = [[big_m for _ in range(n)] for _ in range(n)]
         for row in range(n):
@@ -144,7 +148,10 @@ class Dendrite:
                 if row == col:  # TODO zrobic tak zeby tylko jedna polowa macierzy sie przeliczala i kopiowala, a nie ze obie robia to samo 2 razy
                     pass
                 else:
-                    distance = min(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
+                    if type == "closest":
+                        distance = min(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
+                    else: # if type == "farthest":
+                        distance = max(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
                     # print "dist", distance
                     result_matrix[row][col] = distance
         return result_matrix
@@ -194,15 +201,19 @@ class Dendrite:
             print link
         print self.groups
         print self.get_json()
+        self.process_visualisation()
 
-    def write_html(self):
-        w = html_handler.Handler()
-        w.write_html(self.get_json())
+    def process_visualisation(self):
 
-def run(data):
-    d = Dendrite(data)
+        w = html_handler.Handler(self.get_json())
+        w.write_html()
+        w.open_visualisation()
+
+
+def run(data, metric):
+    d = Dendrite(data, metric)
     d.calculate()
 
 if __name__ == '__main__':
-    d = Dendrite(0)
+    d = Dendrite(0,"Najblizszy sasiad")
     d.calculate()

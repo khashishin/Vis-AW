@@ -1,7 +1,6 @@
 from Tkinter import *
 import tkMessageBox
 from tkFileDialog import askopenfilename
-import sys
 import xlrd
 import pandas
 import algorithm as alg
@@ -10,49 +9,59 @@ class GUI:
 
     def __init__(self):
         self.sheet_list = ["Wybierz najpierw plik"]
+        self.metric_list = ["Najblizszy sasiad", "Najdalszy sasiad"]
         self.listbox_height = 4
         self.filename = ""
         self.root = Tk()
 
         self.excel_file = StringVar()
-        self.excel_file.set("testText1")
+        # self.excel_file.set("testText1")
 
-        self.listbox2 = Listbox(self.root, height=self.listbox_height, exportselection=0)
+        self.sheet_listbox = Listbox(self.root, height=self.listbox_height, exportselection=0)
+        self.metric_listbox = Listbox(self.root, height=self.listbox_height, exportselection=0)
         self.objects_maping = {}  # Saves original objects names.
 
-    def prepare_listbox(self,l):
-        self.listbox2.grid(row=4)
-        self.listbox2.delete(0, END)
+    def prepare_listboxes(self, l):
+        self.sheet_listbox.grid(row=4)
+        self.metric_listbox.grid(row=6)
+
+        self.sheet_listbox.delete(0, END)
+        self.metric_listbox.delete(0, END)
+
         for elem in l:
-            self.listbox2.insert(END, elem)
+            self.sheet_listbox.insert(END, elem)
+        for elem in self.metric_list:
+            self.metric_listbox.insert(END, elem)
 
     def main(self):
 
         self.root.title("Dendryt")
         self.root.resizable(width=FALSE, height=FALSE)
         # self.root.geometry('{}x{}'.format(300, 300))
-        self.prepare_listbox(self.sheet_list)
+        self.prepare_listboxes(self.sheet_list)
 
-        label1 = Label(self.root, text="Wybierz plik excela do wczytania")
-        label1.grid(row=0)
+        file_label = Label(self.root, text="Wybierz plik excela do wczytania")
+        file_label.grid(row=0)
 
-
-        label2=Label(self.root, text="Wybierz arkusz z wybranego pliku excela")
-        label2.grid(row=3)
+        sheet_lavel=Label(self.root, text="Wybierz arkusz z wybranego pliku excela")
+        sheet_lavel.grid(row=3)
 
         file_button = Button(self.root, text="Wybierz plik", command=self.get_filename)
         file_button.grid(row=1)
 
+        metric_label = Label(self.root, text="Wybierz sposob liczenia odleglosci miedzy grupami")
+        metric_label.grid(row=5)
+
         ok_button = Button(self.root, text="Ok", command=self.pressed)
         ok_button.config(width=10)
-        ok_button.grid(row=5)
+        ok_button.grid(row=7)
         self.root.mainloop()
 
     def get_filename(self):
         self.filename = askopenfilename()
         self.excel_file.set(self.filename)
         xls = pandas.ExcelFile(self.filename)
-        self.prepare_listbox(xls.sheet_names)
+        self.prepare_listboxes(xls.sheet_names)
 
         # print self.excel_file.get() # TODO: dodac Label z nazwa pliku?
 
@@ -60,17 +69,12 @@ class GUI:
         print "Start calculations"
         try:
             print self.filename
-            print self.listbox2.get(self.listbox2.curselection())
+            print self.sheet_listbox.get(self.sheet_listbox.curselection())
             excel = xlrd.open_workbook(str(self.filename))
-            sheet = excel.sheet_by_index(self.listbox2.curselection()[0])
-            self.get_excel_content(sheet)
-            # sheet = read_excel(filename, sheetname=listbox2.get(listbox2.curselection())) # TODO: nie zczytuje excela
-            # s = pandas.ExcelFile(filename)
-            # s.parse(listbox2.get(listbox2.curselection()))
-            # print_excel_content(s)
-            # print self.data
-            alg.run(self.data)
-        except (IndexError, TclError) as e:
+            sheet = excel.sheet_by_index(self.sheet_listbox.curselection()[0])
+            self.data = self.get_excel_content(sheet)
+            alg.run(self.data, self.metric_listbox.get(self.metric_listbox.curselection()))
+        except (IndexError, TclError, IOError) as e:
             print "Error:",e
             tkMessageBox.showinfo("Blad", "Wybierz plik i arkusz excela")
 
@@ -97,7 +101,7 @@ class GUI:
 
         objects.pop(0)
         self.set_objects_maping(objects)
-        self.data = data
+        return data
 
 
 
