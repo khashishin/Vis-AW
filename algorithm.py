@@ -139,6 +139,13 @@ class Dendrite:
         if self.distance_metric == "farthest neighbour":
             return self.get_closest_neighbour_distance("farthest")
         # TODO: dodac wiecej opcji liczenia dystansu
+        # Mozliwe opcje:
+        # najblizszy sasiad - jest
+        # najdalszy sasiad  - wystarczy zmienic z min na max
+        # formula srednich grupowych - bez sensu
+        # uogolniona odleglosc Mahalanobisa - potrzebna metoda liczenia centroidow oraz
+        # macierzy wariancji i kowariancji zmiennych (zawsze przy porownywaniu 2 grup)
+        # moge sie tego podjac - Hinc
 
     def get_closest_neighbour_distance(self, type):
         n = len(self.groups)
@@ -157,11 +164,7 @@ class Dendrite:
         return result_matrix
 
     def get_all_distances(self, group1, group2):
-        result = []
-        for x in group1:
-            for y in group2:
-                result.append(self.matrix[x][y])
-        return result
+        return [self.matrix[x][y] for x in group1 for y in group2]
 
     def add_link(self,node1, node2, bond, length):
         self.links.append({"source": node1, "target": node2, "bond": bond, "length": length})
