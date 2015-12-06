@@ -3,6 +3,7 @@ import json
 import webbrowser
 import os
 
+
 class Handler:
 
     def __init__(self, j):
@@ -11,13 +12,20 @@ class Handler:
 
     def write_html(self):
         now = datetime.datetime.now()
-        file1 = open('htmls/part1.txt', 'r')
-        file2 = open('htmls/part2.txt', 'r')
-        self.filename = str("htmls/"+now.strftime("%Y-%m-%d_%H-%M")+".html")
+        filename = open('visualisation.html', 'r')
+        self.filename = str("visualisations/"+now.strftime("%Y-%m-%d_%H-%M")+".html")
+        found = False
+
         with open(self.filename, "w") as out_file:
-            out_file.write(file1.read())
-            out_file.write(json.dumps(self.j))
-            out_file.write(file2.read())
+            for line in filename:
+                if not found:
+                    out_file.write(line)
+                if "application/json" in line:
+                    found = True
+                    out_file.write(json.dumps(self.j))
+                if found and "</script>" in line:
+                    found = False
+                    out_file.write(line)
 
     def open_visualisation(self):
         webbrowser.open('file://' + os.path.realpath(self.filename))
