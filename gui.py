@@ -74,7 +74,7 @@ class GUI:
         elif sys.platform == 'linux2':
             subprocess.check_call(['xdg-open', '--', self.directory])
         elif sys.platform == 'win32':
-                subprocess.check_call(['explorer', self.directory])
+            subprocess.check_call(['explorer', self.directory])
 
     def get_filename(self):
         self.filename = askopenfilename()
