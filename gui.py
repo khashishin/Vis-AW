@@ -1,9 +1,13 @@
+# coding=utf-8
 from Tkinter import *
 import tkMessageBox
 from tkFileDialog import askopenfilename
 import xlrd
 import pandas
 import algorithm as alg
+import os
+import subprocess
+
 
 class GUI:
 
@@ -11,8 +15,10 @@ class GUI:
         self.sheet_list = ["Wybierz najpierw plik"]
         self.metric_list = ["Najblizszy sasiad", "Najdalszy sasiad"]
         self.listbox_height = 4
+        self.button_width = 30
         self.filename = ""
         self.root = Tk()
+        self.directory = os.path.dirname(os.path.realpath(__file__))
 
         self.excel_file = StringVar()
         # self.excel_file.set("testText1")
@@ -53,11 +59,17 @@ class GUI:
         metric_label = Label(self.root, text="Wybierz sposob liczenia odleglosci miedzy grupami")
         metric_label.grid(row=5)
 
-        ok_button = Button(self.root, text="Ok", command=self.pressed)
-        ok_button.config(width=10)
+        ok_button = Button(self.root, text="Stwórz dendryt", command=self.pressed)
+        # ok_button.config(width=self.button_width)
         ok_button.grid(row=7)
+
+        folder_button = Button(self.root, text="Otworz folder z wizualizacjami", command=self.open_folder)
+        # folder_button.config(width=self.button_width)
+        folder_button.grid(row=8)
         self.root.mainloop()
 
+    def open_folder(self):
+        subprocess.Popen('explorer {}'.format(self.directory))
     def get_filename(self):
         self.filename = askopenfilename()
         self.excel_file.set(self.filename)
