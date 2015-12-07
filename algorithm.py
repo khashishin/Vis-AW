@@ -8,7 +8,7 @@ big_m = 9999999
 
 
 class Dendrite:
-    def __init__(self, data, metric, objects_maping):
+    def __init__(self, data, metric, objects_mapping):
 
         self.final_number_of_groups = 1
         self.data = data
@@ -17,7 +17,7 @@ class Dendrite:
 
         self.groups = []
         self.groups_maping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
-        self.objects_maping = objects_maping
+        self.objects_maping = objects_mapping
         self.metrics_dict ={"Najblizszy sasiad": "closest neighbour",
                             "Najdalszy sasiad": "farthest neighbour"}
         self.distance_metric = self.metrics_dict[metric]
@@ -61,6 +61,7 @@ class Dendrite:
                     self.add_to_groups_joining(key, value["target"])
 
             self.join_groups()
+            del self.groups_to_join[:]
 
     def add_to_groups_joining(self,group1_id, group2_id):
         self.groups_to_join.append(sorted((group1_id, group2_id)))
@@ -68,7 +69,6 @@ class Dendrite:
     def join_groups(self):
         self.groups_to_join.sort()
         final_joining = list(k for k,_ in itertools.groupby(self.groups_to_join))  # Deleting BA if (AB and BA) - duplicates
-        # print groups
         new_groups = []
         for joining in final_joining:
             new_groups.append(self.groups[joining[0]] + self.groups[joining[1]])
@@ -94,6 +94,7 @@ class Dendrite:
 
     def rebuild_matrix(self,links):
         c = 0
+        self.groups_maping.clear()
         for group in self.groups:
             self.groups_maping[c] = group
             c += 1
@@ -108,9 +109,6 @@ class Dendrite:
             return self.get_closest_neighbour_distance("farthest")
         # TODO: dodac wiecej opcji liczenia dystansu
         # Mozliwe opcje:
-        # najblizszy sasiad - jest
-        # najdalszy sasiad  - wystarczy zmienic z min na max
-        # formula srednich grupowych - bez sensu
         # uogolniona odleglosc Mahalanobisa - potrzebna metoda liczenia centroidow oraz
         # macierzy wariancji i kowariancji zmiennych (zawsze przy porownywaniu 2 grup)
         # moge sie tego podjac - Hinc
@@ -120,7 +118,7 @@ class Dendrite:
         result_matrix = [[big_m for _ in range(n)] for _ in range(n)]
         for row in range(n):
             for col in range(n):
-                if row == col:  # TODO zrobic tak zeby tylko jedna polowa macierzy sie przeliczala i kopiowala, a nie ze obie robia to samo 2 razy
+                if row == col:
                     pass
                 else:
                     if type == "closest":
@@ -131,7 +129,7 @@ class Dendrite:
         return result_matrix
 
     def get_all_distances(self, group1, group2):
-        return [self.matrix[x][y] for x in group1 for y in group2]
+        return [self.original_matrix[x][y] for x in group1 for y in group2]
 
     def add_link(self,node1, node2, bond, length):
         self.links.append({"source": node1, "target": node2, "bond": bond, "length": length})
@@ -157,27 +155,34 @@ class Dendrite:
         self.original_matrix = self.matrix
         self.add_nodes()
         self.calculate_closest_nodes(self.matrix, True)
-        if len(self.groups) == self.final_number_of_groups:
-             # End of the work.
-            print self.get_json()
-        else:
+
+        while len(self.groups) != self.final_number_of_groups:
             self.remove_duplicates_from_groups()
             self.matrix = self.rebuild_matrix(self.links)
-            self.calculate_closest_nodes(self.matrix, False)  # TODO: od tad - a konkretrnie False przy first_iteration. Polaczyc odpowiednie krawedzie pomiedzy grupami
+            self.calculate_closest_nodes(self.matrix, False)
+
+        # if len(self.groups) == self.final_number_of_groups:
+        #      # End of the work.
+        #     print self.get_json()
+        # else:
+        #     self.remove_duplicates_from_groups()
+        #     self.matrix = self.rebuild_matrix(self.links)
+        #     self.calculate_closest_nodes(self.matrix, False)  # TODO: od tad - a konkretrnie False przy first_iteration. Polaczyc odpowiednie krawedzie pomiedzy grupami
 
         # self.remove_duplicates_from_groups()
         # self.matrix = self.rebuild_matrix(self.links)
         # self.calculate_closest_nodes(self.matrix, False)
 
+        # for x in self.matrix:
+        #     print x
+
         print "Links:"
         for link in self.links:
             print link
-        print self.groups
-        # print self.get_json()
+
         self.process_visualisation()
 
     def process_visualisation(self):
-
         w = html_handler.Handler(self.get_json())
         w.write_html()
         w.open_visualisation()
@@ -187,8 +192,7 @@ class Dendrite:
         for value in self.links:
             values.append(value["bond"])
         np_array = np.array(values)
-        # print 'srednia', np_array.mean(), "odch", np_array.std()
-        return np_array.mean(),np_array.std()
+        return np_array.mean(), np_array.std()
 
 
 def get_3_level_sample():
