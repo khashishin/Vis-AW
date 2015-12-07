@@ -18,8 +18,8 @@ class Dendrite:
         self.groups = []
         self.groups_maping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
         self.objects_maping = objects_maping
-        self.metrics_dict ={"Najbliższy sąsiad": "closest neighbour",
-                            "Najdalszy sąsiad": "farthest neighbour"}
+        self.metrics_dict ={"Najblizszy sasiad": "closest neighbour",
+                            "Najdalszy sasiad": "farthest neighbour"}
         self.distance_metric = self.metrics_dict[metric]
         self.original_matrix = []
         self.groups_to_join = []

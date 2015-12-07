@@ -13,7 +13,7 @@ class GUI:
 
     def __init__(self):
         self.sheet_list = ["Wybierz najpierw plik"]
-        self.metric_list = ["Najbliższy sąsiad", "Najdalszy sąsiad"]
+        self.metric_list = ["Najblizszy sasiad", "Najdalszy sasiad"]
         self.listbox_height = 4
         self.button_width = 30
         self.filename = ""
