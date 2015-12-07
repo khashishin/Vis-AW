@@ -183,7 +183,9 @@ class Dendrite:
         values = []
         for value in self.links:
             values.append(value["bond"])
-        # TODO: od tad
+        np_array = np.array(values)
+        # print 'srednia', np_array.mean(), "odch", np_array.std()
+        return np_array.mean() + np_array.std()
 
 
 def get_3_level_sample():
