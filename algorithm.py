@@ -1,3 +1,4 @@
+# coding=utf-8
 import json
 import numpy as np
 import itertools
@@ -17,7 +18,7 @@ class Dendrite:
         self.groups = []
         self.groups_maping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
         self.objects_maping = objects_maping
-        self.metrics_dict ={"Najblizszy sasiad": "closest neighbour",
+        self.metrics_dict ={"Najbliższy sasiad": "closest neighbour",
                             "Najdalszy sasiad": "farthest neighbour"}
         self.distance_metric = self.metrics_dict[metric]
         self.original_matrix = []
@@ -172,8 +173,8 @@ class Dendrite:
         for link in self.links:
             print link
         print self.groups
-        print self.get_json()
-        self.process_visualisation()
+        # print self.get_json()
+        # self.process_visualisation() TODO: odkomentowac
 
     def process_visualisation(self):
 
