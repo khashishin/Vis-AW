@@ -174,7 +174,7 @@ class Dendrite:
             print link
         print self.groups
         # print self.get_json()
-        self.process_visualisation() TODO: odkomentowac
+        self.process_visualisation()
 
     def process_visualisation(self):
 
