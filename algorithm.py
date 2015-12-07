@@ -140,9 +140,11 @@ class Dendrite:
             self.nodes.append({"node": self.objects_maping[x]})
 
     def get_json(self):
+        critical_value = self.get_critical_value()
         result = {"nodes": self.nodes,
                   "links": self.links,
-                  "critical value": self.get_critical_value()}
+                  "mean": critical_value[0],
+                  "std_dev":critical_value[1]}
         return json.dumps(result)
 
     def calculate(self):
@@ -162,9 +164,9 @@ class Dendrite:
             self.matrix = self.rebuild_matrix(self.links)
             self.calculate_closest_nodes(self.matrix, False)  # TODO: od tad - a konkretrnie False przy first_iteration. Polaczyc odpowiednie krawedzie pomiedzy grupami
 
-        # remove_duplicates_from_groups()
-        # matrix = rebuild_matrix(links)
-        # calculate_closest_nodes(matrix, False)
+        # self.remove_duplicates_from_groups()
+        # self.matrix = self.rebuild_matrix(self.links)
+        # self.calculate_closest_nodes(self.matrix, False)
 
         print "Links:"
         for link in self.links:
@@ -185,7 +187,7 @@ class Dendrite:
             values.append(value["bond"])
         np_array = np.array(values)
         # print 'srednia', np_array.mean(), "odch", np_array.std()
-        return np_array.mean() + np_array.std()
+        return np_array.mean(),np_array.std()
 
 
 def get_3_level_sample():
