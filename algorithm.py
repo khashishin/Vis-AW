@@ -185,6 +185,7 @@ class Dendrite:
             values.append(value["bond"])
         # TODO: od tad
 
+
 def get_3_level_sample():
         # TODO: remove in production
         return [[9999999,	1,	2,	9,	9,	9,	9,	9],
@@ -196,8 +197,9 @@ def get_3_level_sample():
     [9,	9,	9,	9,	2,	9,	9999999,	1],
     [9,	9,	9,	9,	9,	9,	1,	9999999]]
 
+
 def prepare_data(data):
-    n= len(data[0])
+    n = len(data[0])
     data[0][0] = ""
     for x in range(n):
         for y in range(n):

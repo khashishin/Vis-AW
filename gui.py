@@ -69,7 +69,12 @@ class GUI:
         self.root.mainloop()
 
     def open_folder(self):
-        subprocess.Popen('explorer {}'.format(self.directory))
+        if sys.platform == 'darwin':
+            subprocess.check_call(['open', '--', self.directory])
+        elif sys.platform == 'linux2':
+            subprocess.check_call(['xdg-open', '--', self.directory])
+        elif sys.platform == 'win32':
+                subprocess.check_call(['explorer', self.directory])
 
     def get_filename(self):
         self.filename = askopenfilename()
