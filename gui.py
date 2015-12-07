@@ -35,7 +35,6 @@ class GUI:
     def prepare_listboxes(self, l):
         self.sheet_listbox.grid(row=4)
         self.metric_listbox.grid(row=6)
-
         self.sheet_listbox.delete(0, END)
         self.metric_listbox.delete(0, END)
 
@@ -59,13 +58,13 @@ class GUI:
         file_button = Button(self.root, text="Wybierz plik", command=self.get_filename)
         file_button.grid(row=1)
 
-        metric_label = Label(self.root, text="Wybierz sposób liczenia odleglości między grupami")
+        metric_label = Label(self.root, text="Wybierz sposób liczenia odległości między grupami")
         metric_label.grid(row=5)
 
         ok_button = Button(self.root, text="Stwórz dendryt", command=self.pressed)
         ok_button.grid(row=7)
 
-        folder_button = Button(self.root, text="Otworz folder z wizualizacjami", command=self.open_folder)
+        folder_button = Button(self.root, text="Otwórz folder z wizualizacjami", command=self.open_folder)
         folder_button.grid(row=8)
         self.root.mainloop()
 
@@ -112,7 +111,6 @@ class GUI:
         objects.pop(0)
         self.set_objects_mapping(objects)
         return data
-
 
 
 if __name__ == '__main__':

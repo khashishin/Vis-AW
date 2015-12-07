@@ -23,18 +23,6 @@ class Dendrite:
         self.original_matrix = []
         self.groups_to_join = []
 
-    def get_3_level_sample(self):
-        # TODO: remove in production
-        return [
-    [9999999,	1,	2,	9,	9,	9,	9,	9],
-    [1,	9999999,	9,	9,	9,	9,	9,	9],
-    [2,	9,	9999999,	1,	3,	9,	9,	9],
-    [9,	9,	1,	9999999,	9,	9,	9,	9],
-    [9,	9,	3,	9,	9999999,	1,	2,	9],
-    [9,	9,	9,	9,	1,	9999999,	9,	9],
-    [9,	9,	9,	9,	2,	9,	9999999,	1],
-    [9,	9,	9,	9,	9,	9,	1,	9999999]]
-
     def calculate_closest_nodes(self,matrix, first_iteration):
         neighbours_dict = {}
         print 'Calculating closest nodes... Current matrix:'
@@ -45,19 +33,13 @@ class Dendrite:
                 if matrix[row][col] == row_min:
                     neighbours_dict[row] = {"target": col, "bond": 1, "length": matrix[row][col]}
                     self.add_point_to_group(row, col)
-
                     if col in neighbours_dict.keys() and neighbours_dict[col]["target"] == row and neighbours_dict[row]["target"] == col:
                         neighbours_dict[col]["bond"] = 2
                         neighbours_dict[row]["bond"] = 2
-
                     break
-
-        # print matrix
         print "Found neighbours:"
         print neighbours_dict
         self.remove_duplicates_from_groups()
-
-
         if first_iteration:
             for key, value in neighbours_dict.iteritems():
                 self.add_link(key, value["target"], value["bond"], value["length"])
@@ -103,7 +85,6 @@ class Dendrite:
             if point2 in group:
                 group.append(point)
                 return
-
         self.groups.append([point, point2])
 
     def remove_duplicates_from_groups(self,):
@@ -117,7 +98,6 @@ class Dendrite:
             c += 1
         print "Rebuilding matrix... New group maping:"
         print self.groups_maping
-
         return self.get_distance_between_groups()
 
     def get_distance_between_groups(self):
@@ -146,7 +126,6 @@ class Dendrite:
                         distance = min(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
                     else: # if type == "farthest":
                         distance = max(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
-                    # print "dist", distance
                     result_matrix[row][col] = distance
         return result_matrix
 
@@ -162,13 +141,14 @@ class Dendrite:
 
     def get_json(self):
         result = {"nodes": self.nodes,
-                  "links": self.links}
+                  "links": self.links,
+                  "critical value": self.get_critical_value()}
         return json.dumps(result)
 
     def calculate(self):
 
         if self.data == 0:
-            self.matrix = self.get_3_level_sample()
+            self.matrix = get_3_level_sample()
         else:
             self.matrix = self.data
         self.original_matrix = self.matrix
@@ -199,17 +179,32 @@ class Dendrite:
         w.write_html()
         w.open_visualisation()
 
+    def get_critical_value(self):
+        values = []
+        for value in self.links:
+            values.append(value["bond"])
+        # TODO: od tad
+
+def get_3_level_sample():
+        # TODO: remove in production
+        return [[9999999,	1,	2,	9,	9,	9,	9,	9],
+    [1,	9999999,	9,	9,	9,	9,	9,	9],
+    [2,	9,	9999999,	1,	3,	9,	9,	9],
+    [9,	9,	1,	9999999,	9,	9,	9,	9],
+    [9,	9,	3,	9,	9999999,	1,	2,	9],
+    [9,	9,	9,	9,	1,	9999999,	9,	9],
+    [9,	9,	9,	9,	2,	9,	9999999,	1],
+    [9,	9,	9,	9,	9,	9,	1,	9999999]]
+
 def prepare_data(data):
     n= len(data[0])
-    # d = [data[x][y] if x!=y else big_m for x in range(n) for y in range(n)]
-    # print d
-    # return d
     data[0][0] = ""
     for x in range(n):
         for y in range(n):
             if x == y:
                 data[x][y] = big_m
     return data
+
 
 def run(data, metric, objects_maping):
     data = prepare_data(data)
