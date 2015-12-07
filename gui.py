@@ -73,16 +73,14 @@ class GUI:
             excel = xlrd.open_workbook(str(self.filename))
             sheet = excel.sheet_by_index(self.sheet_listbox.curselection()[0])
             self.data = self.get_excel_content(sheet)
-            alg.run(self.data, self.metric_listbox.get(self.metric_listbox.curselection()))
+            alg.run(self.data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_maping)
         except (IndexError, TclError, IOError) as e:
             print "Error:",e
             tkMessageBox.showinfo("Blad", "Wybierz plik i arkusz excela")
 
     def set_objects_maping(self, objects_list):
-        c = 0
-        for object in objects_list:
-            self.objects_maping[c] = object
-            c += 1
+        for object in range(len(objects_list)):
+            self.objects_maping[object] = objects_list[object]
 
         print 'Maping:', self.objects_maping
 

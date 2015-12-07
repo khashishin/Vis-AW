@@ -7,9 +7,8 @@ big_m = 9999999
 
 
 class Dendrite:
-    def __init__(self, data, metric):
+    def __init__(self, data, metric, objects_maping):
 
-        self.N = 8        # TODO: remove in production
         self.final_number_of_groups = 1
         self.data = data
         self.nodes, self.links = [], []
@@ -17,6 +16,7 @@ class Dendrite:
 
         self.groups = []
         self.groups_maping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
+        self.objects_maping = objects_maping
         self.metrics_dict ={"Najblizszy sasiad": "closest neighbour",
                             "Najdalszy sasiad": "farthest neighbour"}
         self.distance_metric = self.metrics_dict[metric]
@@ -35,20 +35,7 @@ class Dendrite:
     [9,	9,	9,	9,	2,	9,	9999999,	1],
     [9,	9,	9,	9,	9,	9,	1,	9999999]]
 
-    def get_sample_data(self):
-        # TODO: remove in production
-        b = np.random.random_integers(0, 10, size=(self.N, self.N))
-        b_symm = (b + b.T) / 2
-
-        for row in range(self.N):
-            for column in range(self.N):
-                if row == column:
-                    b_symm[row][column] = big_m
-        return b_symm
-
-
     def calculate_closest_nodes(self,matrix, first_iteration):
-        # points = [x for x in range(N)]
         neighbours_dict = {}
         print 'Calculating closest nodes... Current matrix:'
         for row in range(len(matrix)):
@@ -170,22 +157,22 @@ class Dendrite:
         self.links.append({"source": node1, "target": node2, "bond": bond, "length": length})
 
     def add_nodes(self):
-        for x in range(self.N):
-            self.nodes.append({"node": x})
+        for x in range(len(self.objects_maping)):
+            self.nodes.append({"node": self.objects_maping[x]})
 
     def get_json(self):
         result = {"nodes": self.nodes,
                   "links": self.links}
         return json.dumps(result)
 
-    def calculate(self,):
-        self.add_nodes()
+    def calculate(self):
+
         if self.data == 0:
             self.matrix = self.get_3_level_sample()
         else:
             self.matrix = self.data
         self.original_matrix = self.matrix
-
+        self.add_nodes()
         self.calculate_closest_nodes(self.matrix, True)
         if len(self.groups) == self.final_number_of_groups:
              # End of the work.
@@ -212,11 +199,24 @@ class Dendrite:
         w.write_html()
         w.open_visualisation()
 
+def prepare_data(data):
+    n= len(data[0])
+    # d = [data[x][y] if x!=y else big_m for x in range(n) for y in range(n)]
+    # print d
+    # return d
+    for x in range(n):
+        for y in range(n):
+            if x == y:
+                data[x][y] = big_m
+    return data
 
-def run(data, metric):
-    d = Dendrite(data, metric)
+def run(data, metric, objects_maping):
+    data = prepare_data(data)
+    d = Dendrite(data, metric, objects_maping)
     d.calculate()
 
 if __name__ == '__main__':
-    d = Dendrite(0,"Najblizszy sasiad")
+    maping = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
+
+    d = Dendrite(0, "Najblizszy sasiad", maping)
     d.calculate()
