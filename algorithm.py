@@ -204,6 +204,7 @@ def prepare_data(data):
     # d = [data[x][y] if x!=y else big_m for x in range(n) for y in range(n)]
     # print d
     # return d
+    data[0][0] = ""
     for x in range(n):
         for y in range(n):
             if x == y:
