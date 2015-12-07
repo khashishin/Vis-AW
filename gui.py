@@ -19,13 +19,18 @@ class GUI:
         self.filename = ""
         self.root = Tk()
         self.directory = os.path.dirname(os.path.realpath(__file__))
-
         self.excel_file = StringVar()
-        # self.excel_file.set("testText1")
+        subdirectories= [x[0] for x in os.walk(self.directory)]
 
+        def get_visualisations_dir(subdirectory):
+            for elem in subdirectory:
+                if "visualisations" in elem:
+                    return elem
+
+        self.directory = get_visualisations_dir(subdirectories)
         self.sheet_listbox = Listbox(self.root, height=self.listbox_height, exportselection=0)
         self.metric_listbox = Listbox(self.root, height=self.listbox_height, exportselection=0)
-        self.objects_maping = {}  # Saves original objects names.
+        self.objects_mapping = {}  # Saves original objects names.
 
     def prepare_listboxes(self, l):
         self.sheet_listbox.grid(row=4)
@@ -40,11 +45,9 @@ class GUI:
             self.metric_listbox.insert(END, elem)
 
     def main(self):
-
         self.root.title("Dendryt")
         self.root.iconbitmap('icon.ico')
         self.root.resizable(width=FALSE, height=FALSE)
-        # self.root.geometry('{}x{}'.format(300, 300))
         self.prepare_listboxes(self.sheet_list)
 
         file_label = Label(self.root, text="Wybierz plik excela do wczytania")
@@ -56,27 +59,24 @@ class GUI:
         file_button = Button(self.root, text="Wybierz plik", command=self.get_filename)
         file_button.grid(row=1)
 
-        metric_label = Label(self.root, text="Wybierz sposob liczenia odleglosci miedzy grupami")
+        metric_label = Label(self.root, text="Wybierz sposób liczenia odleglości między grupami")
         metric_label.grid(row=5)
 
         ok_button = Button(self.root, text="Stwórz dendryt", command=self.pressed)
-        # ok_button.config(width=self.button_width)
         ok_button.grid(row=7)
 
         folder_button = Button(self.root, text="Otworz folder z wizualizacjami", command=self.open_folder)
-        # folder_button.config(width=self.button_width)
         folder_button.grid(row=8)
         self.root.mainloop()
 
     def open_folder(self):
         subprocess.Popen('explorer {}'.format(self.directory))
+
     def get_filename(self):
         self.filename = askopenfilename()
         self.excel_file.set(self.filename)
         xls = pandas.ExcelFile(self.filename)
         self.prepare_listboxes(xls.sheet_names)
-
-        # print self.excel_file.get() # TODO: dodac Label z nazwa pliku?
 
     def pressed(self):
         print "Start calculations"
@@ -85,17 +85,17 @@ class GUI:
             print self.sheet_listbox.get(self.sheet_listbox.curselection())
             excel = xlrd.open_workbook(str(self.filename))
             sheet = excel.sheet_by_index(self.sheet_listbox.curselection()[0])
-            self.data = self.get_excel_content(sheet)
-            alg.run(self.data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_maping)
+            self.dendrite_data = self.get_excel_content(sheet)
+            alg.run(self.dendrite_data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_mapping)
         except (IndexError, TclError, IOError) as e:
             print "Error:",e
-            tkMessageBox.showinfo("Blad", "Wybierz plik i arkusz excela")
+            tkMessageBox.showinfo("Błąd", "Wybierz poprawny plik, arkusz excela i sposób liczenia odleglości między grupami.")
 
-    def set_objects_maping(self, objects_list):
+    def set_objects_mapping(self, objects_list):
         for object in range(len(objects_list)):
-            self.objects_maping[object] = objects_list[object]
+            self.objects_mapping[object] = objects_list[object]
 
-        print 'Maping:', self.objects_maping
+        print 'Maping:', self.objects_mapping
 
     def get_excel_content(self, excel_file):
         objects = []
@@ -109,9 +109,8 @@ class GUI:
                 for col_idx in range(0, num_cols):
                     cell_obj = excel_file.cell(row_idx, col_idx)
                     objects.append(str(cell_obj.value))
-
         objects.pop(0)
-        self.set_objects_maping(objects)
+        self.set_objects_mapping(objects)
         return data
 
 
