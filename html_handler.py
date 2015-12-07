@@ -13,7 +13,7 @@ class Handler:
     def write_html(self):
         now = datetime.datetime.now()
         filename = open('visualisation.html', 'r')
-        self.filename = str("visualisations/"+now.strftime("%Y-%m-%d_%H-%M")+".html")
+        self.filename = str("wizualizacje/"+now.strftime("%Y-%m-%d_%H-%M")+".html")
         found = False
 
         with open(self.filename, "w") as out_file:
