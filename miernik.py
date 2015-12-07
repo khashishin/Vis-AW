@@ -76,7 +76,7 @@ class Miernik:
             ar.append(z)
         df_std['miernik'] = ar
         miernik = df_std['miernik'].copy()
-        miernik.sort(['miernik'], ascending=False)
+        miernik.sort_values(inplace=True, ascending=False)
         print(miernik)
         return miernik
 
