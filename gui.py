@@ -82,17 +82,17 @@ class GUI:
         self.excel_file.set(self.filename)
         xls = pandas.ExcelFile(self.filename)
         self.prepare_listboxes(xls.sheet_names)
+        xls.close()
 
     def pressed(self):
         print "Start calculations"
         try:
             print self.filename
             print self.sheet_listbox.get(self.sheet_listbox.curselection())
-            excel = xlrd.open_workbook(str(self.filename))
-            sheet = excel.sheet_by_index(self.sheet_listbox.curselection()[0])
             distance_maker = d_counter.Counter(self.filename,self.sheet_listbox.curselection()[0])
-            distance_maker.read_excel()
-            self.dendrite_data = self.get_excel_content(sheet) # TODO tego nie bedzie juz po wczytaniu z distance_counter
+            self.dendrite_data = distance_maker.get_distance_matrix()
+            self.set_objects_mapping(distance_maker.objects)
+            # self.dendrite_data = self.get_excel_content(sheet) # TODO tego nie bedzie juz po wczytaniu z distance_counter
             alg.run(self.dendrite_data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_mapping)
         except (IndexError, TclError, IOError) as e:
             print "Error:",e
