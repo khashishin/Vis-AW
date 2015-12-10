@@ -60,160 +60,7 @@ font:32px arial;
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script type="application/json" id="data">
-{
-  "nodes": [
-    {
-      "node": 0
-    },
-    {
-      "node": 1
-    },
-    {
-      "node": 2
-    },
-    {
-      "node": 3
-    },
-    {
-      "node": 4
-    },
-    {
-      "node": 5
-    },
-    {
-      "node": 6
-    },
-    {
-      "node": 7
-    },
-    {
-      "node": 8
-    },
-    {
-      "node": 9
-    },
-    {
-      "node": 10
-    },
-    {
-      "node": 11
-    },
-    {
-      "node": 12
-    },
-    {
-      "node": 13
-    },
-    {
-      "node": 14
-    },
-    {
-      "node": 15
-    },
-    {
-      "node": 16
-    }
-  ],
-  "links": [
-    {
-      "source": 5,
-      "length": 50,
-      "target": 6,
-      "bond": 1
-    },
-    {
-      "source": 6,
-      "length": 50,
-      "target": 7,
-      "bond": 1
-    },
-    {
-      "source": 7,
-      "length": 50,
-      "target": 9,
-      "bond": 1
-    },
-    {
-      "source": 0,
-      "length": 50,
-      "target": 4,
-      "bond": 1
-    },
-    {
-      "source": 16,
-      "length": 50,
-      "target": 1,
-      "bond": 1
-    },
-    {
-      "source": 1,
-      "length": 43,
-      "target": 3,
-      "bond": 2
-    },
-    {
-      "source": 2,
-      "length": 43,
-      "target": 4,
-      "bond": 2
-    },
-    {
-      "source": 13,
-      "length": 43,
-      "target": 15,
-      "bond": 2
-    },
-    {
-      "source": 11,
-      "length": 43,
-      "target": 15,
-      "bond": 2
-    },
-    {
-      "source": 15,
-      "length": 43,
-      "target": 9,
-      "bond": 2
-    },
-    {
-      "source": 12,
-      "length": 43,
-      "target": 15,
-      "bond": 2
-    },
-	{
-      "source": 14,
-      "length": 43,
-      "target": 2,
-      "bond": 1
-    },
-		{
-      "source": 10,
-      "length": 86,
-      "target": 8,
-      "bond": 1
-    },
-		{
-      "source": 1,
-      "length": 86,
-      "target": 14,
-      "bond": 1
-    },
-		{
-      "source": 2,
-      "length": 106,
-      "target": 6,
-      "bond": 1
-    },
-		{
-      "source": 8,
-      "length": 126,
-      "target": 16,
-      "bond": 1
-    }
-  ]
-}
-</script>
+{"nodes": [{"node": "a"}, {"node": "b"}, {"node": "c"}, {"node": "d"}, {"node": "e"}, {"node": "f"}, {"node": "g"}, {"node": "h"}], "std_dev": 0.47140452079103168, "links": [{"source": 0, "length": 1, "target": 1, "bond": 2}, {"source": 1, "length": 1, "target": 0, "bond": 2}, {"source": 2, "length": 1, "target": 3, "bond": 2}, {"source": 3, "length": 1, "target": 2, "bond": 2}, {"source": 4, "length": 1, "target": 5, "bond": 2}, {"source": 5, "length": 1, "target": 4, "bond": 2}, {"source": 6, "length": 1, "target": 7, "bond": 2}, {"source": 7, "length": 1, "target": 6, "bond": 2}, {"source": 0, "length": 2, "target": 2, "bond": 1}, {"source": 2, "length": 2, "target": 0, "bond": 1}, {"source": 4, "length": 2, "target": 6, "bond": 1}, {"source": 6, "length": 2, "target": 4, "bond": 1}], "mean": 1.6666666666666667}</script>
 
 <script>
 //Reading threshold value from html slider element
@@ -247,7 +94,7 @@ var force = d3.layout.force()
     .charge(-120)
 	//Gravity value defines eg. the behaviour of nodes when in unconnected state (how strong is the force of attraction/rejection between them )
 	.gravity(0.012)
-    .linkDistance(function(d) { return d.length+r;})
+    .linkDistance(function(d) { return d.length+2*r;})
     .size([width, height]);
 
 //Read the data from the data element in HTML
@@ -269,7 +116,7 @@ return radius}
 force.nodes(graph.nodes)
     .links(graph.links)
     .start();
-console.log(graph)
+
 //Create all the line svgs in group marker, so we can add things to it if we want later (g) - empty, without coordinates
 var link = svg.selectAll("g")
     .data(graph.links)
@@ -319,7 +166,7 @@ function threshold(thresh) {
 //!!!!!!!!!!!!!!!!!!!!TODO WARTOSC KRYTYCZNA HARDCODED NA 40 DO POPRAWY!!!!!!!!!!!!!!!!!!!!
     graph.links.splice(0, graph.links.length);
 		for (var i = 0; i < graphRec.links.length; i++) {
-			if (graphRec.links[i].length > thresh*40) {graph.links.push(graphRec.links[i]);}
+			if (graphRec.links[i].length > thresh*graph.std_dev + graph.mean) {graph.links.push(graphRec.links[i]);}
 		}
     restart();
 }
