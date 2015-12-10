@@ -94,7 +94,7 @@ var force = d3.layout.force()
     .charge(-120)
 	//Gravity value defines eg. the behaviour of nodes when in unconnected state (how strong is the force of attraction/rejection between them )
 	.gravity(0.012)
-    .linkDistance(function(d) { return d.length;})
+    .linkDistance(function(d) { return d.length+50;})
     .size([width, height]);
 
 //Read the data from the data element in HTML

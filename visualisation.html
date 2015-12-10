@@ -247,7 +247,7 @@ var force = d3.layout.force()
     .charge(-120)
 	//Gravity value defines eg. the behaviour of nodes when in unconnected state (how strong is the force of attraction/rejection between them )
 	.gravity(0.012)
-    .linkDistance(function(d) { return d.length;})
+    .linkDistance(function(d) { return d.length+r;})
     .size([width, height]);
 
 //Read the data from the data element in HTML
@@ -263,14 +263,13 @@ if (radius<1) {radius=1}
 if (radius > 20) {radius=20}
 //Redefine text offset to be consistent with the node
 offset = radius-5
-return radius
-}
+return radius}
 
 //Creates the graph data structure out of the json data that is imported into D3 force layout
 force.nodes(graph.nodes)
     .links(graph.links)
     .start();
-  
+console.log(graph)
 //Create all the line svgs in group marker, so we can add things to it if we want later (g) - empty, without coordinates
 var link = svg.selectAll("g")
     .data(graph.links)
