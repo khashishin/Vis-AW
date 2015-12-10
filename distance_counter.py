@@ -1,9 +1,8 @@
-
 from math import sqrt
 from pandas import read_excel
-import pandas as pd
 
 big_m = 99999999999
+
 
 class Counter:
 
@@ -20,34 +19,21 @@ class Counter:
         self.get_distance_matrix()
 
     def get_distance_matrix(self):
-        n= len(self.excel_data)
+        n = len(self.excel_data)
         table = [[big_m for _ in range(n)] for _ in range(n)]
 
-        for row in range(0, len(self.excel_data) - 1):
-            distance = 0
-            
-            for col in self.excel_data.columns:
-                distance += (self.excel_data[col][row] - self.excel_data[col][row+1]) ** 2
-                distance = sqrt(distance)
-            # table[col][row] = distance
-            # table[row][col] = distance
-            #     print row,
-        for x in table:
-            print x
+        for row in range(0, len(self.excel_data)):
+            for row2 in range(0, len(self.excel_data)):
+                distance = 0
+                if row!=row2:
+                    for col in self.excel_data.columns:
+                        distance += (self.excel_data[col][row] - self.excel_data[col][row2]) ** 2
+                    distance = sqrt(distance)
+
+                    table[row][row2] = distance
+                    table[row2][row] = distance
+         return table
 
 if __name__ == '__main__':
     c = Counter('DaneHelwig.xlsx','Dane')
     c.read_excel()
-
-"""
-for row:
-    for row2:
-        distance = 0
-        if row!=row2:
-            for column:
-                distance+= (data[col][row]-data[col][row2])**2
-            distance = sqrt(distance)
-            table[row][row2] = distance
-            table[row2][row] = distance
-
-"""
