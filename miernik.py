@@ -50,7 +50,6 @@ class Miernik:
         data_frame['dzero'] = table
         return data_frame
 
-
     def run_measurer(self, df, des):
         col_list = ['M1', 'Z1', 'B1', 'S1', 'IT1', 'R1']
         zadaniowa = df[col_list]
@@ -60,9 +59,7 @@ class Miernik:
         zadaniowa_std['srednia'] = zadaniowa_std.mean(axis=1)
         miernik = zadaniowa_std['srednia'].copy()
         miernik.sort(['srednia'], ascending=False)
-        # print(miernik)
         return miernik
-
 
     def run_helwig(self, df, des, what_kind):
         df = self.change_character(df, des)
@@ -70,7 +67,6 @@ class Miernik:
         m = df_std['dzero'].mean()
         standard_dev = df_std['dzero'].std()
         ar = []
-
         for i in range(0, len(df_std['dzero'])):
             z = 1 - (df_std['dzero'][i]) / (m + 2 * standard_dev)
             ar.append(z)
@@ -79,6 +75,7 @@ class Miernik:
         miernik.sort_values(inplace=True, ascending=False)
         print(miernik)
         return miernik
+
 
 
 if __name__ == "__main__":

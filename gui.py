@@ -5,6 +5,7 @@ from tkFileDialog import askopenfilename
 import xlrd
 import pandas
 import algorithm as alg
+import distance_counter as d_counter
 import os
 import subprocess
 
@@ -89,7 +90,9 @@ class GUI:
             print self.sheet_listbox.get(self.sheet_listbox.curselection())
             excel = xlrd.open_workbook(str(self.filename))
             sheet = excel.sheet_by_index(self.sheet_listbox.curselection()[0])
-            self.dendrite_data = self.get_excel_content(sheet)
+            distance_maker = d_counter.Counter(self.filename,self.sheet_listbox.curselection()[0])
+            distance_maker.read_excel()
+            self.dendrite_data = self.get_excel_content(sheet) # TODO tego nie bedzie juz po wczytaniu z distance_counter
             alg.run(self.dendrite_data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_mapping)
         except (IndexError, TclError, IOError) as e:
             print "Error:",e
