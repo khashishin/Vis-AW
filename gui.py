@@ -46,6 +46,7 @@ class GUI:
 
     def main(self):
         self.root.title("Dendryt")
+
         self.root.iconbitmap('icon.ico')
         self.root.resizable(width=FALSE, height=FALSE)
         self.prepare_listboxes(self.sheet_list)
