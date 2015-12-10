@@ -32,6 +32,8 @@ width: 38%;
 }
 
 #textInput{
+float:right;
+border:none;
 position: fixed;
 font: 28px arial;
 }
@@ -108,7 +110,6 @@ var force = d3.layout.force()
     .charge(-120)
 	//Gravity value defines eg. the behaviour of nodes when in unconnected state (how strong is the force of attraction/rejection between them )
 	.gravity(0.012)
-    .linkDistance(function(d) { return d.length+(2*r);})
     .linkDistance(function(d) { return d.length+(2*r);})
     .size([width, height]);
 
