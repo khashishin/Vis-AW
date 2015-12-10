@@ -95,7 +95,7 @@ class GUI:
             # self.dendrite_data = self.get_excel_content(sheet) # TODO tego nie bedzie juz po wczytaniu z distance_counter
             alg.run(self.dendrite_data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_mapping)
         except (IndexError, TclError, IOError) as e:
-            print "Error:",e
+            print "Error:", e
             tkMessageBox.showinfo("Błąd", "Wybierz poprawny plik, arkusz excela i sposób liczenia odleglości między grupami.")
 
     def set_objects_mapping(self, objects_list):

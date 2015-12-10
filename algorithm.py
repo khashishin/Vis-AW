@@ -143,7 +143,7 @@ class Dendrite:
         result = {"nodes": self.nodes,
                   "links": self.links,
                   "mean": critical_value[0],
-                  "std_dev":critical_value[1]}
+                  "std_dev": critical_value[1]}
         return json.dumps(result)
 
     def calculate(self):
@@ -176,10 +176,10 @@ class Dendrite:
         # for x in self.matrix:
         #     print x
 
-        print "Links:"
-        for link in self.links:
-            print link
-
+        # print "Links:"
+        # for link in self.links:
+        #     print link
+        print self.get_json()
         self.process_visualisation()
 
     def process_visualisation(self):
