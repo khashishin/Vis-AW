@@ -72,7 +72,8 @@ font:32px arial;
 
 <script src='d3.min.js'></script>
 <script type="application/json" id="data">
-{"nodes": [{"node": "a"}, {"node": "b"}, {"node": "c"}, {"node": "d"}, {"node": "e"}, {"node": "f"}, {"node": "g"}, {"node": "h"}], "std_dev": 0.47140452079103168, "links": [{"source": 0, "length": 1, "target": 1, "bond": 2}, {"source": 1, "length": 1, "target": 0, "bond": 2}, {"source": 2, "length": 1, "target": 3, "bond": 2}, {"source": 3, "length": 1, "target": 2, "bond": 2}, {"source": 4, "length": 1, "target": 5, "bond": 2}, {"source": 5, "length": 1, "target": 4, "bond": 2}, {"source": 6, "length": 1, "target": 7, "bond": 2}, {"source": 7, "length": 1, "target": 6, "bond": 2}, {"source": 0, "length": 2, "target": 2, "bond": 1}, {"source": 2, "length": 2, "target": 0, "bond": 1}, {"source": 4, "length": 2, "target": 6, "bond": 1}, {"source": 6, "length": 2, "target": 4, "bond": 1}], "mean": 0.99}</script>
+{"nodes": [{"node": "a"}, {"node": "b"}, {"node": "c"}, {"node": "d"}, {"node": "e"}, {"node": "f"}, {"node": "g"}, {"node": "h"}], "std_dev": 0.47140452079103168, "links": [{"source": 0, "length": 1, "target": 1, "bond": 2}, {"source": 1, "length": 1, "target": 0, "bond": 2}, {"source": 2, "length": 1, "target": 3, "bond": 2}, {"source": 3, "length": 1, "target": 2, "bond": 2}, {"source": 4, "length": 1, "target": 5, "bond": 2}, {"source": 5, "length": 1, "target": 4, "bond": 2}, {"source": 6, "length": 1, "target": 7, "bond": 2}, {"source": 7, "length": 1, "target": 6, "bond": 2}, {"source": 0, "length": 2, "target": 2, "bond": 1}, {"source": 2, "length": 2, "target": 0, "bond": 1}, {"source": 4, "length": 2, "target": 6, "bond": 1}, {"source": 6, "length": 2, "target": 4, "bond": 1}], "mean": 0.99}
+</script>
 
 <script>
 //Reading threshold value from html slider element
@@ -192,7 +193,7 @@ function threshold(thresh) {
 // What happens when you click node in graph
 function selectPoint(d) {
 	d3.select('#selected h1')
-      .text("User: "+ d.node)
+      .text("Obiekt: "+ d.node)
 }
 
 //Restart the visualisation after any node and link changes
