@@ -26,29 +26,33 @@
 }
 
 #header {
-font: 50px arial;
+font: 40px arial;
 margin: auto;
 width: 38%;
 }
 
 #textInput{
+float:center;
+border:none;
 position: relative;
 font: 28px arial;
+bottom: 1px;
 }
 
 #details{
 position:relative;
-font: 28px arial;
+font: 24px arial;
 }
 
 #cut_value{
 position:relative;
 border: none;
 font: 24px arial;
+bottom: 1px;
 }
 
 #slider {
-font:32px arial;
+font:24px arial;
 }
 </style>
 
@@ -61,9 +65,11 @@ font:32px arial;
 	Odetnij na poziomie średniej odległości + K odchyleń standardowych:  0     <input type="range" id="thresholdSlider" name="points" value = 0 min="0" max="4" onchange="threshold(this.value);  updateTextInput(this.value)" >     4
 	</div>
 	<div id="details">
-	Aktualna wartość "odcinania" =   	<input id="cut_value" value="" readonly size="1">
+	Aktualna odległość "odcinania" =   	<input id="cut_value" value="" readonly size="1">
+	K =
+		<input type="text" id="textInput" value="0" readonly size="1">
 	</div>
-	<input type="text" id="textInput" value="" readonly size="1">
+
 </form>
   
 <div id='visualisation'>
@@ -84,16 +90,17 @@ var width = window.screen.width,
 	// default radius of node
 	r = 8
 	//Offests sets the offset of text labels.
-	offset=6;
+	offset=6
+	fixed_width=width*0.98;
 
 //Append a SVG to the body of the html page. Assign this SVG as an object to svg
 var svg = d3.select("#visualisation").append("svg")
-    .attr("width", width)
+    .attr("width", fixed_width)
     .attr("height", height);
 	
 //Definind ounding box that will b shown on visualisation
 svg.append("svg:rect")
-    .attr("width", width)
+    .attr("width", fixed_width)
     .attr("height", height)
     .style("stroke", "#000")
 	.style("fill", "WHITE");
@@ -107,8 +114,7 @@ var force = d3.layout.force()
 	//Gravity value defines eg. the behaviour of nodes when in unconnected state (how strong is the force of attraction/rejection between them )
 	.gravity(0.012)
     .linkDistance(function(d) { return d.length+(2*r);})
-    .linkDistance(function(d) { return d.length+(2*r);})
-    .size([width, height]);
+    .size([fixed_width, height]);
 
 //Read the data from the data element in HTML
 var data = document.getElementById('data').innerHTML;
@@ -165,7 +171,7 @@ force.on("tick", function () {
         .attr("x2", function (d) {return d.target.x;})
         .attr("y2", function (d) {return d.target.y;});
 		
-	circles.attr("cx", function(d) { return d.x = Math.max(r, Math.min(width - r+5, d.x)); })
+	circles.attr("cx", function(d) { return d.x = Math.max(r, Math.min(fixed_width - r+5, d.x)); })
         .attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r+5, d.y)); });
 
 	TextLabels
@@ -177,13 +183,10 @@ force.on("tick", function () {
 threshold(document.getElementById('thresholdSlider').value);
 //Adjust cutting/splicing links threshold
 function threshold(thresh) {
-	
     graph.links.splice(0, graph.links.length);
 	var cutting_value= graph.mean +(thresh*graph.std_dev)
-
 		for (var i = 0; i < graphRec.links.length; i++) {
-			if (graphRec.links[i].length > cutting_value) {graph.links.push(graphRec.links[i]);}
-		}
+			if (graphRec.links[i].length > cutting_value) {graph.links.push(graphRec.links[i]);}}
 	
 	document.getElementById('cut_value').value=(Math.round(cutting_value * 1000) / 1000);
     restart();
