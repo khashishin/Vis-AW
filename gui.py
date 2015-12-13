@@ -93,7 +93,6 @@ class GUI:
             distance_maker = d_counter.Counter(self.filename,self.sheet_listbox.curselection()[0])
             self.dendrite_data = distance_maker.get_distance_matrix()
             self.set_objects_mapping(distance_maker.objects)
-            # self.dendrite_data = self.get_excel_content(sheet) # TODO tego nie bedzie juz po wczytaniu z distance_counter
             alg.run(self.dendrite_data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_mapping)
         except (IndexError, TclError, IOError) as e:
             print "Error:", e
@@ -106,6 +105,7 @@ class GUI:
         print 'Maping:', self.objects_mapping
 
     def get_excel_content(self, excel_file):
+        # Side-effect usability - program can work on distance matrix alone.
         objects = []
         data = []
         num_cols = excel_file.ncols

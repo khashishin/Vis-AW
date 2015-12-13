@@ -27,5 +27,5 @@ class Counter:
         return table
 
 if __name__ == '__main__':
-    c = Counter('DaneHelwig.xlsx','Dane')
+    c = Counter('przykladowyExcel.xlsx','Dane')
     print c.get_distance_matrix()

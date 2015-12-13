@@ -79,7 +79,7 @@ class Miernik:
 
 
 if __name__ == "__main__":
-    framka = read_excel('DaneHelwig.xlsx', sheetname='Dane')
-    opisy = read_excel('DaneHelwig.xlsx', sheetname='OpisZmiennych')
+    framka = read_excel('przykladowyExcel.xlsx', sheetname='Dane')
+    opisy = read_excel('przykladowyExcel.xlsx', sheetname='OpisZmiennych')
     m = Miernik()
     m.run_helwig(framka, opisy, "unitaryzacja")

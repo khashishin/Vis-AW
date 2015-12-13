@@ -4,31 +4,31 @@ import numpy as np
 import itertools
 import html_handler
 
-big_m = 9999999
+big_m = 9999999  # Value on 
 
 
 class Dendrite:
     def __init__(self, data, metric, objects_mapping):
 
-        self.final_number_of_groups = 1
+        self.final_number_of_groups = 1  # Side-effect usability - program can stop after having n groups.
         self.data = data
         self.nodes, self.links = [], []
         self.matrix = []
 
         self.groups = []
         self.groups_maping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
-        self.objects_maping = objects_mapping
+        self.objects_maping = objects_mapping  # Maps outer names of objects into numbers.
         self.metrics_dict ={"Najblizszy sasiad": "closest neighbour",
                             "Najdalszy sasiad": "farthest neighbour"}
         self.distance_metric = self.metrics_dict[metric]
-        self.original_matrix = []
+        self.original_matrix = []  # Original distance matrix.
         self.groups_to_join = []
 
     def calculate_closest_nodes(self,matrix, first_iteration):
         neighbours_dict = {}
         print 'Calculating closest nodes... Current matrix:'
         for row in range(len(matrix)):
-            print matrix[row]
+            # print matrix[row]
             row_min = min(matrix[row])
             for col in range(len(matrix[row])):
                 if matrix[row][col] == row_min:
@@ -72,14 +72,12 @@ class Dendrite:
         new_groups = []
         for joining in final_joining:
             new_groups.append(self.groups[joining[0]] + self.groups[joining[1]])
-
         self.set_as_new_groups(new_groups)
 
     def set_as_new_groups(self, new_groups):
         del self.groups[:]
         for group in new_groups:
             self.groups.append(group)
-        # TODO od tad: mam nowe grupy, juz polaczone, teraz caly proces dalej zapetlic. Zaczac od przeliczenia groups_maping
 
     def add_point_to_group(self, point, point2):
         for group in self.groups:
@@ -123,7 +121,7 @@ class Dendrite:
                 else:
                     if type == "closest":
                         distance = min(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
-                    else: # if type == "farthest":
+                    else:  # if type == "farthest": TODO not working
                         distance = max(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
                     result_matrix[row][col] = distance
         return result_matrix
@@ -160,25 +158,6 @@ class Dendrite:
             self.remove_duplicates_from_groups()
             self.matrix = self.rebuild_matrix(self.links)
             self.calculate_closest_nodes(self.matrix, False)
-
-        # if len(self.groups) == self.final_number_of_groups:
-        #      # End of the work.
-        #     print self.get_json()
-        # else:
-        #     self.remove_duplicates_from_groups()
-        #     self.matrix = self.rebuild_matrix(self.links)
-        #     self.calculate_closest_nodes(self.matrix, False)  # TODO: od tad - a konkretrnie False przy first_iteration. Polaczyc odpowiednie krawedzie pomiedzy grupami
-
-        # self.remove_duplicates_from_groups()
-        # self.matrix = self.rebuild_matrix(self.links)
-        # self.calculate_closest_nodes(self.matrix, False)
-
-        # for x in self.matrix:
-        #     print x
-
-        # print "Links:"
-        # for link in self.links:
-        #     print link
         print self.get_json()
         self.process_visualisation()
 
