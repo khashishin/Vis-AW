@@ -26,7 +26,7 @@
 }
 
 #header {
-font: 50px arial;
+font: 40px arial;
 margin: auto;
 width: 38%;
 }
@@ -41,7 +41,7 @@ bottom: 1px;
 
 #details{
 position:relative;
-font: 28px arial;
+font: 24px arial;
 }
 
 #cut_value{
@@ -52,7 +52,7 @@ bottom: 1px;
 }
 
 #slider {
-font:32px arial;
+font:24px arial;
 }
 </style>
 
@@ -95,12 +95,12 @@ var width = window.screen.width,
 
 //Append a SVG to the body of the html page. Assign this SVG as an object to svg
 var svg = d3.select("#visualisation").append("svg")
-    .attr("width", width)
+    .attr("width", width*0.98)
     .attr("height", height);
 	
 //Definind ounding box that will b shown on visualisation
 svg.append("svg:rect")
-    .attr("width", width)
+    .attr("width", width*0.98)
     .attr("height", height)
     .style("stroke", "#000")
 	.style("fill", "WHITE");
