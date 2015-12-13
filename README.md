@@ -2,8 +2,11 @@
 
 Jak powinien być sformatowany plik Excela:
 
-  - W arkuszu z danymi nie może znajdować sie nic poza macierza odleglosci
-  - Kolumna "A" - zawiera nazwy obiektow
-  - Wiersz "1" -  zawiera nazwy obiektow w takiej samej kolejnosci jak te w kolumnie "A"
-  - Macierz musi być symetryczna
-  - Nie ma znaczenia co znajdzie sie na przekatnej macierzy i w komórce "A0"- moga to byc zera, puste komorki itd.
+  - W arkuszu z danymi nie może znajdować sie nic poza macierza z danymi o obiektach,
+  - Komórka "A1" musi być pusta,
+  - W wierszu "1" powinny znaleźć sie nazwy zmiennych,
+  - W kolumnie "A" powinny znaleźć sie nazwy obiektów,
+  - Nie ma ograniczenia na ilosc obiektow i zmiennych,
+  - Jezeli o danym obiekcie brak informacji o danej zmiennej, nalezy wprowadzić tam 0
+  
+Plik "przykladowyExcel.xlsx" zawiera przykladowy wyglad arkusza, dla którego wizualizacja zadziala.
