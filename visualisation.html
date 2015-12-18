@@ -54,6 +54,11 @@ bottom: 1px;
 #slider {
 font:24px arial;
 }
+
+line.separator {
+  stroke: #fff;
+  stroke-width: 2px;
+}
 </style>
 
 
@@ -78,7 +83,27 @@ font:24px arial;
 
 <script src='d3.min.js'></script>
 <script type="application/json" id="data">
-{"nodes": [{"node": "a"}, {"node": "b"}, {"node": "c"}, {"node": "d"}, {"node": "e"}, {"node": "f"}, {"node": "g"}, {"node": "h"}], "std_dev": 0.47140452079103168, "links": [{"source": 0, "length": 1, "target": 1, "bond": 2}, {"source": 1, "length": 1, "target": 0, "bond": 2}, {"source": 2, "length": 1, "target": 3, "bond": 2}, {"source": 3, "length": 1, "target": 2, "bond": 2}, {"source": 4, "length": 1, "target": 5, "bond": 2}, {"source": 5, "length": 1, "target": 4, "bond": 2}, {"source": 6, "length": 1, "target": 7, "bond": 2}, {"source": 7, "length": 1, "target": 6, "bond": 2}, {"source": 0, "length": 2, "target": 2, "bond": 1}, {"source": 2, "length": 2, "target": 0, "bond": 1}, {"source": 4, "length": 2, "target": 6, "bond": 1}, {"source": 6, "length": 2, "target": 4, "bond": 1}], "mean": 0.99}
+{"nodes":
+[{"node": "a"}, 
+{"node": "b"},
+{"node": "c"}, 
+{"node": "d"}, 
+{"node": "e"},
+{"node": "f"}, 
+{"node": "g"},
+{"node": "h"}], 
+
+"links":
+[{"source": 0, "length": 15, "target": 1, "bond": 2}, 
+{"source": 3, "length": 14, "target": 2, "bond": 2}, 
+{"source": 5, "length": 18, "target": 4, "bond": 2}, 
+{"source": 7, "length": 44, "target": 6, "bond": 2}, 
+{"source": 2, "length": 30, "target": 0, "bond": 1}, 
+{"source": 0, "length": 15, "target": 3, "bond": 2}, 
+{"source": 6, "length": 46, "target": 4, "bond": 1}],
+
+"std_dev": 4.47, 
+"mean": 14.99}
 </script>
 
 <script>
@@ -129,7 +154,7 @@ var radius = 250/graph.nodes.length
 if (radius<1) {radius=1}
 if (radius > 20) {radius=20}
 //Redefine text offset to be consistent with the node
-offset = radius-5
+offset = radius
 return radius}
 
 //Creates the graph data structure out of the json data that is imported into D3 force layout
@@ -143,7 +168,7 @@ var link = svg.selectAll("g")
     .enter()
 	.append("line")
     .attr("class", "link")
-	.style("stroke-width", function(d) {if (d.bond>1) return (d.bond * 2 - 1) * 2 + "px"; })
+
 
 //The same with nodes (circles)
 var node = svg.selectAll("g")
@@ -171,12 +196,12 @@ force.on("tick", function () {
         .attr("y1", function (d) {return d.source.y;})
         .attr("x2", function (d) {return d.target.x;})
         .attr("y2", function (d) {return d.target.y;});
-		
+			
 	circles.attr("cx", function(d) { return d.x = Math.max(r, Math.min(fixed_width - r+5, d.x)); })
         .attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r+5, d.y)); });
 
 	TextLabels
-	    .attr("x", function (d) {return d.x+offset;})
+	    .attr("x", function (d) {return d.x-offset;})
         .attr("y", function (d) {return d.y-offset;});
 });
 
@@ -199,17 +224,17 @@ function selectPoint(d) {
       .text("Obiekt: "+ d.node)
 }
 
-//Restart the visualisation after any node and link changes
+//Draw lines and restart the visualisation after any node and link changes
 function restart() {
 	link = link
 	.data(graph.links)
-	.style("stroke-width", function(d) {if (d.bond>1) return (d.bond * 2 - 1) * 2 + "px"; })
+	.style("stroke-width", function(d) {if (d.bond>1) return (d.bond - 1) * 8 + "px"; })
 	link.exit().remove();
 	link
 		.enter()
 		.insert("line","g")
 		.attr("class", "link")
-		.style("stroke-width", function(d) {if (d.bond>1) return (d.bond * 2 - 1) * 2 + "px"; })
+		.style("stroke-width", function(d) {if (d.bond>1) return (d.bond - 1) * 8 + "px"; })
 	force.start();
 }
 
@@ -229,12 +254,13 @@ function connectedNodes() {
         node.style("opacity", function (o) {return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;});
         link.style("opacity", function (o) {return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1;});
         //Reduce the opacity
-        toggle = 1;}
+        toggle = 1;
+		}
 	
 	else {
         //Put them back to opacity=1
         node.style("opacity", 1);
         link.style("opacity", 1);
         toggle = 0;}
-}
+		}
 </script>
