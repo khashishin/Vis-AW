@@ -212,7 +212,7 @@ function threshold(thresh) {
     graph.links.splice(0, graph.links.length);
 	var cutting_value= graph.mean +(thresh*graph.std_dev)
 		for (var i = 0; i < graphRec.links.length; i++) {
-			if (graphRec.links[i].length > cutting_value) {graph.links.push(graphRec.links[i]);}}
+			if (graphRec.links[i].length < cutting_value) {graph.links.push(graphRec.links[i]);}}
 	
 	document.getElementById('cut_value').value=(Math.round(cutting_value * 1000) / 1000);
     restart();

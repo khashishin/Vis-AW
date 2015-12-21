@@ -152,3 +152,19 @@
     }
   ]
 }
+
+
+
+{"nodes":
+[{"node": "a"}, 
+{"node": "b"},
+{"node": "c"},
+{"node": "d"}], 
+
+"links":
+[{"source": 0, "length": 14, "target": 1, "bond": 2},
+{"source": 0, "length": 21, "target": 2, "bond": 2},
+{"source": 1, "length": 26, "target": 3, "bond": 1}],
+
+"std_dev": 5.01, 
+"mean": 14.99}
