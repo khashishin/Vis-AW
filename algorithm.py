@@ -16,8 +16,8 @@ class Dendrite:
         self.matrix = []
 
         self.groups = []
-        self.groups_maping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
-        self.objects_maping = objects_mapping  # Maps outer names of objects into numbers.
+        self.groups_mapping = {}  # Maps groups into numbers 0,1,2... for easier indexing in algorithms.
+        self.objects_mapping = objects_mapping  # Maps outer names of objects into numbers.
         self.metrics_dict ={"Najblizszy sasiad": "closest neighbour",
                             "Najdalszy sasiad": "farthest neighbour"}
         self.distance_metric = self.metrics_dict[metric]
@@ -28,7 +28,6 @@ class Dendrite:
         neighbours_dict = {}
         print 'Calculating closest nodes... Current matrix:'
         for row in range(len(matrix)):
-            # print matrix[row]
             row_min = min(matrix[row])
             for col in range(len(matrix[row])):
                 if matrix[row][col] == row_min:
@@ -50,14 +49,12 @@ class Dendrite:
                 if len(self.groups[key]) > 1:
 
                     print "Want to join", self.groups[key], "with", self.groups[value["target"]]
-                    mini = (0, 0, big_m) # Minimal distance and it's nodes
+                    minimal_distance = (0, 0, big_m) # Minimal distance and it's nodes
                     for node in self.groups[key]:
                         for node2 in self.groups[value["target"]]:
-                            if self.original_matrix[node][node2] < mini[2]:
-                                mini = (node, node2,  self.original_matrix[node][node2])
-                            # print node, node2, "distance:", original_matrix[node][node2]
-                    # print "Joining by", mini
-                    self.add_link(mini[0], mini[1], 1, mini[2])
+                            if self.original_matrix[node][node2] < minimal_distance[2]:
+                                minimal_distance = (node, node2,  self.original_matrix[node][node2])
+                    self.add_link(minimal_distance[0], minimal_distance[1], 1, minimal_distance[2])
                     self.add_to_groups_joining(key, value["target"])
 
             self.join_groups()
@@ -92,19 +89,17 @@ class Dendrite:
 
     def rebuild_matrix(self,links):
         c = 0
-        self.groups_maping.clear()
+        self.groups_mapping.clear()
         for group in self.groups:
-            self.groups_maping[c] = group
+            self.groups_mapping[c] = group
             c += 1
         print "Rebuilding matrix... New group maping:"
-        print self.groups_maping
+        print self.groups_mapping
         return self.get_distance_between_groups()
 
     def get_distance_between_groups(self):
-        if self.distance_metric == "closest neighbour":
-            return self.get_closest_neighbour_distance("closest")
-        if self.distance_metric == "farthest neighbour":
-            return self.get_closest_neighbour_distance("farthest")
+        if "neighbour" in self.distance_metric:
+            return self.get_closest_neighbour_distance(self.distance_metric)
         # TODO: dodac wiecej opcji liczenia dystansu
         # Mozliwe opcje:
         # uogolniona odleglosc Mahalanobisa - potrzebna metoda liczenia centroidow oraz
@@ -119,10 +114,14 @@ class Dendrite:
                 if row == col:
                     pass
                 else:
-                    if type == "closest":
-                        distance = min(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
-                    else:  # if type == "farthest": TODO not working
-                        distance = max(self.get_all_distances(self.groups_maping[row], self.groups_maping[col]))
+                    if type == "closest neighbour":
+                        distance = min(self.get_all_distances(self.groups_mapping[row], self.groups_mapping[col]))
+                    if type == "farthest neighbour":
+                        distance_list = self.get_all_distances(self.groups_mapping[row], self.groups_mapping[col])
+                        distance = 0
+                        for dist in distance_list: # Max distance excluding big_m
+                            if distance < dist < big_m:
+                                distance = dist
                     result_matrix[row][col] = distance
         return result_matrix
 
@@ -133,8 +132,8 @@ class Dendrite:
         self.links.append({"source": node1, "target": node2, "bond": bond, "length": length})
 
     def add_nodes(self):
-        for x in range(len(self.objects_maping)):
-            self.nodes.append({"node": self.objects_maping[x]})
+        for x in range(len(self.objects_mapping)):
+            self.nodes.append({"node": self.objects_mapping[x]})
 
     def get_json(self):
         critical_value = self.get_critical_value()
@@ -158,8 +157,8 @@ class Dendrite:
             self.remove_duplicates_from_groups()
             self.matrix = self.rebuild_matrix(self.links)
             self.calculate_closest_nodes(self.matrix, False)
-        print self.get_json()
-        self.process_visualisation()
+        # print self.get_json()
+        # self.process_visualisation()
 
     def process_visualisation(self):
         w = html_handler.Handler(self.get_json())
