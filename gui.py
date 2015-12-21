@@ -25,7 +25,7 @@ class GUI:
 
         def get_visualisations_dir(subdirectory):
             for elem in subdirectory:
-                if "wizualizacje" in elem:
+                if "Wizualizacje" in elem:
                     return elem
 
         self.directory = get_visualisations_dir(subdirectories)

@@ -199,6 +199,7 @@ def run(data, metric, objects_maping):
     data = prepare_data(data)
     d = Dendrite(data, metric, objects_maping)
     d.calculate()
+    d.process_visualisation()
 
 if __name__ == '__main__':
     maping = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
