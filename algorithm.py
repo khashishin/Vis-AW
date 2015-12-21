@@ -169,7 +169,7 @@ class Dendrite:
     def get_critical_value(self):
         values = []
         for value in self.links:
-            values.append(value["bond"])
+            values.append(value["length"])
         np_array = np.array(values)
         return np_array.mean(), np_array.std()
 
