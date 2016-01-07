@@ -10,3 +10,9 @@ Jak powinien być sformatowany plik Excela:
   - Jezeli o danym obiekcie brak informacji o danej zmiennej, nalezy wprowadzić tam 0
   
 Plik "przykladowyExcel.xlsx" zawiera przykladowy wyglad arkusza, dla którego wizualizacja zadziala.
+
+How to release:
+- cd do folderu z programem
+- python setup.py py2exe
+- do dist dodac visualisation.html i folder "Wizualizacje"
+- zrobic skrót gui.exe i dać np na pulpit
