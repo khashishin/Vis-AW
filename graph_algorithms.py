@@ -1,9 +1,3 @@
-import json
-
-""" A Python Class
-A simple Python graph class, demonstrating the essential
-facts and functionalities of graphs.
-"""
 
 class Graph(object):
 
@@ -287,8 +281,7 @@ if __name__ == "__main__":
                {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1},
                {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1},
                {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1},
-               {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1}],
-     "mean": 370.41669423809844}
+               {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1}], }
 
     # g = { "a" : ["d"],
     #       "b" : ["c"],
