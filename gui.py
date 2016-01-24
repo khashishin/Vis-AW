@@ -91,6 +91,7 @@ class GUI:
             print self.sheet_listbox.get(self.sheet_listbox.curselection())
             distance_maker = d_counter.Counter(self.filename,self.sheet_listbox.get(self.sheet_listbox.curselection()))
             self.dendrite_data = distance_maker.get_distance_matrix()
+            print "ddata", self.dendrite_data
             self.set_objects_mapping(distance_maker.objects)
             alg.run(self.dendrite_data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_mapping)
         except (IndexError, TclError, IOError) as e:

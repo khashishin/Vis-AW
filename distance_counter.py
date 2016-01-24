@@ -22,7 +22,7 @@ class Counter:
                 if row != row2:
                     for col in self.excel_data.columns:
                         distance += (self.excel_data[col][row] - self.excel_data[col][row2]) ** 2
-                    distance = sqrt(distance)
+                    distance = round(sqrt(distance), 4)
                     table[row][row2] = distance
                     table[row2][row] = distance
         return table

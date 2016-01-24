@@ -28,8 +28,10 @@ class Handler:
                     found = False
                     out_file.write(line)
 
+
     def open_visualisation(self):
         webbrowser.open('file://' + os.path.realpath(self.filename))
+        graph_algorithms.json_graph_is_connected(self.j)
 
 
 if __name__ == '__main__':

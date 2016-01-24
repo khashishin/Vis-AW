@@ -1,3 +1,4 @@
+import json
 
 class Graph(object):
 
@@ -220,18 +221,18 @@ class Graph(object):
         return True
 
 
-def dendrite_to_graph(dendrite_json):
+def json_graph_is_connected(dendrite_json):
     graph_dict = dict()
+    dendrite_json = json.loads(dendrite_json)
     for link in dendrite_json["links"]:
         if str(link["source"]) not in graph_dict.keys():
             graph_dict[str(link["source"])] = set()
         if str(link["target"]) not in graph_dict.keys():
             graph_dict[str(link["target"])] = set()
-
         graph_dict[str(link["source"])].add(str(link["target"]))
         graph_dict[str(link["target"])].add(str(link["source"]))
     graph = Graph(graph_dict)
-    print "Graph connectivity:", graph.is_connected()
+    return graph.is_connected()
 
 
 if __name__ == "__main__":
@@ -281,7 +282,7 @@ if __name__ == "__main__":
                {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1},
                {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1},
                {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1},
-               {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1}], }
+               {"source": 2, "length": 224.86515959570067, "target": 14, "bond": 1}],}
 
     # g = { "a" : ["d"],
     #       "b" : ["c"],
@@ -292,7 +293,7 @@ if __name__ == "__main__":
     #     }
     # graph = Graph(g)
     # print graph.is_connected()
-    dendrite_to_graph(j)
+    json_graph_is_connected(j)
 
 
     # print("Vertices of graph:")
