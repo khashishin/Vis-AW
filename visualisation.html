@@ -69,7 +69,8 @@ line.separator {
 	
 <form>
     <div id="slider"> 
-	Odetnij na poziomie średniej odległości + K odchyleń standardowych:  0     <input type="range" id="thresholdSlider" name="points" value = 4 min="0" max="4" onchange="threshold(this.value);  updateTextInput(this.value)" >     4
+	Odetnij na poziomie średniej odległości + K odchyleń standardowych:  -1     <input type="range" id="thresholdSlider" name="points" value = 4 min="-1" max="4" onchange="threshold(this.value);  updateTextInput(this.value)" >     4. 
+	 -1 Oznacza brak odcinania, pokazane zostają wszystkie obserwacje
 	</div>
 	<div id="details">
 	Aktualna odległość "odcinania" =   	<input id="cut_value" value="" readonly >
@@ -213,6 +214,7 @@ threshold(document.getElementById('thresholdSlider').value);
 function threshold(thresh) {
     graph.links.splice(0, graph.links.length);
 	var cutting_value= graph.mean +(thresh*graph.std_dev)
+	if (thresh ==-1) {cutting_value = 10000000}
 		for (var i = 0; i < graphRec.links.length; i++) {
 			if (graphRec.links[i].length < cutting_value) {graph.links.push(graphRec.links[i]);}}
 	
