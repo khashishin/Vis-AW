@@ -2,6 +2,7 @@ import datetime
 import json
 import webbrowser
 import os
+import graph_algorithms
 
 
 class Handler:

@@ -9,7 +9,6 @@ import distance_counter as d_counter
 import os
 import subprocess
 
-
 class GUI:
 
     def __init__(self):
@@ -76,7 +75,7 @@ class GUI:
         elif sys.platform == 'linux2':
             subprocess.check_call(['xdg-open', '--', self.directory])
         elif sys.platform == 'win32':
-            subprocess.check_call(['explorer', self.directory])
+            subprocess.call(['explorer', self.directory])
 
     def get_filename(self):
         self.filename = askopenfilename()
@@ -90,7 +89,7 @@ class GUI:
         try:
             print self.filename
             print self.sheet_listbox.get(self.sheet_listbox.curselection())
-            distance_maker = d_counter.Counter(self.filename,self.sheet_listbox.curselection()[0])
+            distance_maker = d_counter.Counter(self.filename,self.sheet_listbox.get(self.sheet_listbox.curselection()))
             self.dendrite_data = distance_maker.get_distance_matrix()
             self.set_objects_mapping(distance_maker.objects)
             alg.run(self.dendrite_data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_mapping)

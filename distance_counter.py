@@ -9,6 +9,7 @@ class Counter:
     def __init__(self, filename, sheet_name):
         self.filename = filename
         self.sheet_name = sheet_name
+
         self.excel_data = read_excel(filename, sheetname=self.sheet_name)
         self.objects = list(self.excel_data.index)
 

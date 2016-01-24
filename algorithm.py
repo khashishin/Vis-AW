@@ -101,10 +101,7 @@ class Dendrite:
         if "neighbour" in self.distance_metric:
             return self.get_closest_neighbour_distance(self.distance_metric)
         # TODO: dodac wiecej opcji liczenia dystansu
-        # Mozliwe opcje:
-        # uogolniona odleglosc Mahalanobisa - potrzebna metoda liczenia centroidow oraz
-        # macierzy wariancji i kowariancji zmiennych (zawsze przy porownywaniu 2 grup)
-        # moge sie tego podjac - Hinc
+
 
     def get_closest_neighbour_distance(self, type):
         n = len(self.groups)
@@ -157,13 +154,11 @@ class Dendrite:
             self.remove_duplicates_from_groups()
             self.matrix = self.rebuild_matrix(self.links)
             self.calculate_closest_nodes(self.matrix, False)
-        # print self.get_json()
-        # self.process_visualisation()
 
     def process_visualisation(self):
-        w = html_handler.Handler(self.get_json())
-        w.write_html()
-        w.open_visualisation()
+        vis_handler = html_handler.Handler(self.get_json())
+        vis_handler.write_html()
+        vis_handler.open_visualisation()
 
     def get_critical_value(self):
         values = []
