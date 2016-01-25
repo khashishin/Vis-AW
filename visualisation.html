@@ -69,8 +69,8 @@ line.separator {
 	
 <form>
     <div id="slider"> 
-	Odetnij na poziomie średniej odległości + K odchyleń standardowych:  -1     <input type="range" id="thresholdSlider" name="points" value = 4 min="-1" max="4" onchange="threshold(this.value);  updateTextInput(this.value)" >     4. 
-	 -1 Oznacza brak odcinania, pokazane zostają wszystkie obserwacje
+	Odetnij na poziomie średniej odległości + K odchyleń standardowych:  -1     <input type="range" id="thresholdSlider" name="points" value = -1 min="-1" max="4" onchange="threshold(this.value);  updateTextInput(this.value)" >     4. 
+	<br> -1 Oznacza brak odcinania, pokazane zostają wszystkie obserwacje
 	</div>
 	<div id="details">
 	Aktualna odległość "odcinania" =   	<input id="cut_value" value="" readonly >
@@ -97,12 +97,11 @@ line.separator {
 {"node": "h"}], 
 
 "links":
-[{"source": 0, "length": 15, "target": 1, "bond": 2}, 
+[{"source": 0, "length": 15, "target": 1, "bond": 1}, 
 {"source": 3, "length": 14, "target": 2, "bond": 2}, 
 {"source": 5, "length": 18, "target": 4, "bond": 2}, 
 {"source": 7, "length": 44, "target": 6, "bond": 2}, 
 {"source": 2, "length": 30, "target": 0, "bond": 1}, 
-{"source": 0, "length": 15, "target": 3, "bond": 2}, 
 {"source": 6, "length": 46, "target": 4, "bond": 1}],
 
 "std_dev": 4.47, 
@@ -154,7 +153,7 @@ graphRec = JSON.parse(JSON.stringify(graph)); //This line is used so the program
 //With this function we define the size of a node based on the number of points we want to visualise, the method is more or less arbitraty fit the points visually.
 function define_node_radius() {
 var radius = 250/graph.nodes.length
-if (radius<1) {radius=1}
+if (radius < 1) {radius=1}
 if (radius > 20) {radius=20}
 //Redefine text offset to be consistent with the node
 offset = radius
@@ -214,11 +213,12 @@ threshold(document.getElementById('thresholdSlider').value);
 function threshold(thresh) {
     graph.links.splice(0, graph.links.length);
 	var cutting_value= graph.mean +(thresh*graph.std_dev)
-	if (thresh ==-1) {cutting_value = 10000000}
+	document.getElementById('cut_value').value=(Math.round(cutting_value * 1000) / 1000);
+	if (thresh ==-1) {cutting_value = 10000000; document.getElementById('cut_value').value="Brak"}
 		for (var i = 0; i < graphRec.links.length; i++) {
 			if (graphRec.links[i].length < cutting_value) {graph.links.push(graphRec.links[i]);}}
 	
-	document.getElementById('cut_value').value=(Math.round(cutting_value * 1000) / 1000);
+	
     restart();
 }
 
