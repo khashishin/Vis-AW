@@ -18,7 +18,7 @@ class GUI:
         self.button_width = 30
         self.filename = ""
         self.root = Tk()
-        self.directory = os.path.dirname(os.path.realpath(__file__))
+        self.directory = os.path.dirname(os.path.realpath('__file__'))
         self.excel_file = StringVar()
         subdirectories= [x[0] for x in os.walk(self.directory)]
 
@@ -46,7 +46,7 @@ class GUI:
     def main(self):
         self.root.title("Dendryt")
 
-        self.root.iconbitmap('icon.ico')
+        # self.root.iconbitmap('icon.ico')
         self.root.resizable(width=FALSE, height=FALSE)
         self.prepare_listboxes(self.sheet_list)
 
@@ -96,7 +96,7 @@ class GUI:
             alg.run(self.dendrite_data, self.metric_listbox.get(self.metric_listbox.curselection()), self.objects_mapping)
         except (IndexError, TclError, IOError) as e:
             print "Error:", e
-            tkMessageBox.showinfo("Błąd", "Wybierz poprawny plik, arkusz excela i sposób liczenia odleglości między grupami.")
+            tkMessageBox.showinfo("Błąd", "Wybierz poprawny plik, arkusz excela i sposób liczenia odleglości między grupami. {}".format(e))
 
     def set_objects_mapping(self, objects_list):
         for object in range(len(objects_list)):

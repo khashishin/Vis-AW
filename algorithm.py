@@ -26,7 +26,7 @@ class Dendrite:
         self.distance_metric = self.metrics_dict[metric]
         self.original_matrix = []  # Original distance matrix.
         self.groups_to_join = []
-        self.step_jsons = []
+        self.step_jsons = {}
 
     def calculate_closest_nodes(self, matrix, first_iteration):
         neighbours_dict = {}
@@ -182,28 +182,30 @@ class Dendrite:
         self.add_nodes()
         self.calculate_closest_nodes(self.matrix, True)
 
+        step = 1
         while len(self.groups) != self.final_number_of_groups:
             print "Next iteration"
             self.remove_duplicates_from_groups()
             self.matrix = self.rebuild_matrix(self.links)
             self.calculate_closest_nodes(self.matrix, False)
-            self.add_step_json(self.get_json())
-        self.do_last_joining()
-        print "Connected graph:", graph_algorithms.json_graph_is_connected(self.get_json())
+            self.add_step_json(self.get_json(), step)
+            step += 1
+        self.do_last_joining(step)
+        print "Connected graph:", graph_algorithms.json_graph_is_connected(self.step_jsons[max(self.step_jsons.keys(), key=int)])
 
-    def do_last_joining(self):
+    def do_last_joining(self, step):
         minimal_distance = (0, 0, big_m)  # Minimal distance and it's nodes
         for node in self.groups_mapping[0]:
             for node2 in self.groups_mapping[1]:
                     minimal_distance = (node, node2, self.original_matrix[node][node2])
         self.add_link(minimal_distance[0], minimal_distance[1], 1, minimal_distance[2])
-        self.add_step_json(self.get_json())
+        self.add_step_json(self.get_json(), step)
 
-    def add_step_json(self, current_json):
-        self.step_jsons.append(current_json)
+    def add_step_json(self, current_json, step):
+        self.step_jsons[step] = current_json
 
     def process_visualisation(self):
-        vis_handler = html_handler.Handler(self.get_json())
+        vis_handler = html_handler.Handler(self.step_jsons)
         vis_handler.write_html()
         vis_handler.open_visualisation()
 
@@ -213,7 +215,6 @@ class Dendrite:
             values.append(value["length"])
         np_array = np.array(values)
         return np_array.mean(), np_array.std()
-
 
 
 def get_3_level_sample():

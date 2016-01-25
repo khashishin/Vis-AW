@@ -10,11 +10,13 @@ class Handler:
     def __init__(self, j):
         self.j = j  # Not named "json" to avoid messing with namespace.
         self.filename = ""
+        print "handler json", self.j[1]
+        print self.j[2]
 
     def write_html(self):
         now = datetime.datetime.now()
         filename = open('visualisation.html', 'r')
-        self.filename = str("wizualizacje/"+now.strftime("%Y-%m-%d_%H-%M")+".html")
+        self.filename = str("Wizualizacje/"+now.strftime("%Y-%m-%d_%H-%M")+".html")
         found = False
 
         with open(self.filename, "w") as out_file:
@@ -23,7 +25,7 @@ class Handler:
                     out_file.write(line)
                 if "application/json" in line:
                     found = True
-                    out_file.write(self.j)
+                    out_file.write(self.j[2])
                 if found and "</script>" in line:
                     found = False
                     out_file.write(line)
@@ -31,7 +33,7 @@ class Handler:
 
     def open_visualisation(self):
         webbrowser.open('file://' + os.path.realpath(self.filename))
-        graph_algorithms.json_graph_is_connected(self.j)
+        graph_algorithms.json_graph_is_connected(self.j[max(self.j.keys(), key=int)])
 
 
 if __name__ == '__main__':
