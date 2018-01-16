@@ -1,6 +1,8 @@
 # Vis-AW
 ENG: Project that implements a taxonomy division method of "Dendryt Wrocławski" based on distance matrix generated from Excel data, and visualizes in on Javascript d3 graph with fixed length edges, and also allows for a data grupping based on cutting the critical value that is at the basis of the method.
 
+![screenshot](screenshot.png)
+
 PL:
 Jak powinien być sformatowany plik Excela:
 
